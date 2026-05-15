@@ -33,7 +33,8 @@ class AuthFlowTest {
     void login_valido_devuelve_200_y_token() throws Exception {
         mvc.perform(post("/auth/register")
                 .contentType("application/json")
-                .content("{\"nombre\":\"Leo\",\"email\":\"leo@example.com\",\"contrasena\":\"clave123\"}"));
+                .content("{\"nombre\":\"Leo\",\"email\":\"leo@example.com\",\"contrasena\":\"clave123\"}"))
+                .andExpect(status().isCreated());
 
         mvc.perform(post("/auth/login")
                         .contentType("application/json")
@@ -47,7 +48,8 @@ class AuthFlowTest {
     void login_con_password_incorrecta_devuelve_401() throws Exception {
         mvc.perform(post("/auth/register")
                 .contentType("application/json")
-                .content("{\"nombre\":\"Mia\",\"email\":\"mia@example.com\",\"contrasena\":\"buena123\"}"));
+                .content("{\"nombre\":\"Mia\",\"email\":\"mia@example.com\",\"contrasena\":\"buena123\"}"))
+                .andExpect(status().isCreated());
 
         mvc.perform(post("/auth/login")
                         .contentType("application/json")

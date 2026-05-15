@@ -18,7 +18,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest req, HttpServletResponse res,
                        AccessDeniedException ex) throws IOException {
         res.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        res.setContentType("application/json");
+        res.setContentType("application/json;charset=UTF-8");
         mapper.writeValue(res.getWriter(), Map.of(
                 "code", "FORBIDDEN",
                 "message", "No tienes permisos para esta operación."));

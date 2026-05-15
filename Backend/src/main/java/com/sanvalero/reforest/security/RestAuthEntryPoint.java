@@ -18,7 +18,7 @@ public class RestAuthEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest req, HttpServletResponse res,
                          AuthenticationException ex) throws IOException {
         res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        res.setContentType("application/json");
+        res.setContentType("application/json;charset=UTF-8");
         mapper.writeValue(res.getWriter(), Map.of(
                 "code", "UNAUTHORIZED",
                 "message", "Autenticación requerida o token inválido."));

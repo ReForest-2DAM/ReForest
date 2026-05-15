@@ -4,7 +4,6 @@ import com.sanvalero.reforest.dto.AuthResponse;
 import com.sanvalero.reforest.dto.LoginRequest;
 import com.sanvalero.reforest.dto.RegisterRequest;
 import com.sanvalero.reforest.model.Usuario;
-import com.sanvalero.reforest.repository.UsuarioRepository;
 import com.sanvalero.reforest.security.JwtService;
 import com.sanvalero.reforest.service.UsuarioService;
 import org.springframework.http.HttpStatus;
@@ -21,14 +20,12 @@ public class AuthController {
     private final UsuarioService usuarioService;
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
-    private final UsuarioRepository usuarioRepository;
 
     public AuthController(UsuarioService usuarioService, JwtService jwtService,
-                          AuthenticationManager authManager, UsuarioRepository usuarioRepository) {
+                          AuthenticationManager authManager) {
         this.usuarioService = usuarioService;
         this.jwtService = jwtService;
         this.authManager = authManager;
-        this.usuarioRepository = usuarioRepository;
     }
 
     @PostMapping("/register")
@@ -54,7 +51,7 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Usuario u = usuarioRepository.findByEmail(req.email()).orElseThrow();
+        Usuario u = usuarioService.findByEmail(req.email());
         String token = jwtService.generateToken(u.getEmail(), u.getRol());
         return ResponseEntity.ok(new AuthResponse(token, u.getId(),
                 u.getNombre(), u.getEmail(), u.getRol()));

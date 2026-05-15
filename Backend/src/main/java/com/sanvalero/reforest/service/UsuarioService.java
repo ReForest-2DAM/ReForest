@@ -52,6 +52,21 @@ public class UsuarioService {
     }
 
     /**
+     * Busca un usuario por su email
+     * @param email Email del usuario
+     * @return Usuario encontrado
+     * @throws UsuarioNotFoundException si no existe
+     */
+    @Transactional(readOnly = true)
+    public Usuario findByEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.error("Usuario no encontrado con email: {}", email);
+                    return new UsuarioNotFoundException(0L);
+                });
+    }
+
+    /**
      * Crea un nuevo usuario
      * @param usuario Datos del usuario a crear
      * @return Usuario creado con ID asignado
