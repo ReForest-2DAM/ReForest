@@ -10,8 +10,6 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-// [LEARN] Un JWT es un token firmado: el servidor confía en su contenido porque
-// solo él conoce la clave de firma. No guarda sesión en servidor (stateless).
 @Service
 public class JwtService {
 
@@ -26,6 +24,7 @@ public class JwtService {
 
     public String generateToken(String email, String rol) {
         Date now = new Date();
+
         return Jwts.builder()
                 .subject(email)
                 .claim("rol", rol)
@@ -45,17 +44,19 @@ public class JwtService {
 
     public boolean isValid(String token, String email) {
         try {
-            Claims c = parse(token);
-            // [LEARN] jjwt ya lanza ExpiredJwtException al parsear un token caducado;
-            // esta comprobación de expiración es una defensa extra explícita.
-            return c.getSubject().equals(email) && c.getExpiration().after(new Date());
+            Claims claims = parse(token);
+            return claims.getSubject().equals(email)
+                    && claims.getExpiration().after(new Date());
         } catch (Exception e) {
             return false;
         }
     }
 
     private Claims parse(String token) {
-        return Jwts.parser().verifyWith(key).build()
-                .parseSignedClaims(token).getPayload();
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
