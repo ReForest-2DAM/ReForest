@@ -19,6 +19,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/donaciones")
+// [LEARN] @CrossOrigin permite que el navegador acepte respuestas de otro origen
+// (la web corre en :5173 y la API en :8080). Sin esto, el navegador bloquea la
+// llamada por la política CORS y axios la reporta como "Network Error".
+@CrossOrigin(origins = "*")
 @Tag(name = "Donaciones", description = "Operaciones sobre las donaciones de reforestación")
 public class DonacionController {
 

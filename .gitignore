@@ -7,3 +7,7 @@ Thumbs.db
 # IDEs
 .idea/
 .vscode/
+
+# Herramientas de asistencia (no se versionan)
+.claude/
+docs/superpowers/
