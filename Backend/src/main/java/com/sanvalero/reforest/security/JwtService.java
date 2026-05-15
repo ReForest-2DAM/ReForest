@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 // [LEARN] Un JWT es un token firmado: el servidor confía en su contenido porque
@@ -19,7 +20,7 @@ public class JwtService {
 
     public JwtService(@Value("${jwt.secret}") String secret,
                       @Value("${jwt.expiration-ms}") long expirationMs) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = expirationMs;
     }
 
@@ -45,6 +46,8 @@ public class JwtService {
     public boolean isValid(String token, String email) {
         try {
             Claims c = parse(token);
+            // [LEARN] jjwt ya lanza ExpiredJwtException al parsear un token caducado;
+            // esta comprobación de expiración es una defensa extra explícita.
             return c.getSubject().equals(email) && c.getExpiration().after(new Date());
         } catch (Exception e) {
             return false;

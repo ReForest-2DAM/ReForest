@@ -20,7 +20,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/especies")
-@CrossOrigin(origins = "*")
 @Tag(name = "Especies", description = "Operaciones sobre el catálogo de especies arbóreas")
 public class EspecieController {
 
