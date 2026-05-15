@@ -9,3 +9,5 @@ export * from './authService';
 
 // Exportar el cliente API
 export { default as apiClient } from '../config/apiClient';
+
+export * from './usuarioService';
