@@ -1,7 +1,7 @@
 # Glosario técnico — ReForest Backend
 
 ## JWT (JSON Web Token)
-Token firmado por el servidor que transporta la identidad (email) y el rol del usuario. El cliente lo envía en cada petición (`Authorization: Bearer <token>`). El servidor confía en su contenido porque solo él conoce la clave de firma; no guarda sesión (stateless).
+Token firmado por el servidor que transporta la identidad (email) y el rol del usuario. El cliente lo envía en cada petición (`Authorization: Bearer <token>`). El servidor confía en su contenido porque solo él conoce la clave de firma; no guarda sesión (stateless). El token tiene una caducidad (`jwt.expiration-ms`) tras la cual deja de ser válido.
 
 ## BCrypt
 Algoritmo de hash de contraseñas de un solo sentido y con salt. Las contraseñas nunca se almacenan en claro: al hacer login se compara el hash, no el texto.
