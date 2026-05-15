@@ -14,7 +14,7 @@ jobs:
       - name: Checkout config server repository
         uses: actions/checkout@v4
         with:
-          repository: ReForest/ReForestConfigServer
+          repository: ReForest-2DAM/ReForestConfigServer
           path: ReForestConfigServer
 
       - name: Set up Java 21
