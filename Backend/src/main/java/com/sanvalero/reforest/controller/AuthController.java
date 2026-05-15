@@ -9,6 +9,7 @@ import com.sanvalero.reforest.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import java.util.Map;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -44,12 +45,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         try {
             authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(req.email(), req.contrasena()));
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("code", "UNAUTHORIZED", "message", "Credenciales incorrectas."));
         }
         Usuario u = usuarioService.findByEmail(req.email());
         String token = jwtService.generateToken(u.getEmail(), u.getRol());

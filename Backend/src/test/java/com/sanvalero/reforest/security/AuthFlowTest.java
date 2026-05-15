@@ -54,6 +54,7 @@ class AuthFlowTest {
         mvc.perform(post("/auth/login")
                         .contentType("application/json")
                         .content("{\"email\":\"mia@example.com\",\"contrasena\":\"mala\"}"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
     }
 }
