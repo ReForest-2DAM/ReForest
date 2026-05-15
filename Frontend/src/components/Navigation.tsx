@@ -46,6 +46,10 @@ export default function Navigation() {
           <Link to="/especies" style={styles.link}>{t('nav.especies')}</Link>
           <Link to="/donaciones" style={styles.link}>{t('nav.donaciones')}</Link>
 
+          {isLoggedIn && (
+            <Link to="/dashboard" style={styles.link}>📊 Dashboard</Link>
+          )}
+
           {isLoggedIn && isAdmin && (
             <Link to="/usuarios" style={styles.link}>👥 Usuarios</Link>
           )}

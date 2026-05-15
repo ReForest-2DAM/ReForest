@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
 import UsuariosList from './pages/UsuariosList';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -18,6 +19,11 @@ function App() {
       <Navigation />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        } />
         <Route path="/especies" element={<EspeciesList />} />
         <Route path="/especies/:id" element={<EspecieDetail />} />
         <Route path="/donaciones" element={
