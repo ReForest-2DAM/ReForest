@@ -28,7 +28,7 @@ public class AdminSeedConfig {
             admin.setNombre("Admin");
             admin.setEmail(adminEmail);
             admin.setContrasena(encoder.encode(adminPassword));
-            admin.setRol("ADMIN");
+            admin.setRol("ROLE_ADMIN");
 
             usuarioRepository.save(admin);
 
