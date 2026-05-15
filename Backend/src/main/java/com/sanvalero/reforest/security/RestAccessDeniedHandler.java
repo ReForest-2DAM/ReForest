@@ -21,6 +21,6 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         res.setContentType("application/json;charset=UTF-8");
         mapper.writeValue(res.getWriter(), Map.of(
                 "code", "FORBIDDEN",
-                "message", "No tienes permisos para esta operación."));
+                "message", "You do not have permission to perform this operation."));
     }
 }

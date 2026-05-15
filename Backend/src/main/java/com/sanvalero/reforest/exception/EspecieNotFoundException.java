@@ -10,7 +10,7 @@ public class EspecieNotFoundException extends RuntimeException {
      * @param id ID de la especie no encontrada
      */
     public EspecieNotFoundException(long id) {
-        super("Especie no encontrada con ID: " + id);
+        super("Species not found with ID: " + id);
     }
 
     /**

@@ -21,6 +21,6 @@ public class RestAuthEntryPoint implements AuthenticationEntryPoint {
         res.setContentType("application/json;charset=UTF-8");
         mapper.writeValue(res.getWriter(), Map.of(
                 "code", "UNAUTHORIZED",
-                "message", "Autenticación requerida o token inválido."));
+                "message", "Authentication required or invalid token."));
     }
 }
