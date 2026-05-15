@@ -45,9 +45,16 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "const json = pm.response.json();\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
                   "\r",
-                  "pm.environment.set(\"token\", json.token);"
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "console.log(response);\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"token\", response.token);\r",
+                  "pm.environment.set(\"token\", response.token);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -111,43 +118,6 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nombre\": \"Lucía Martín Verde\",\n  \"email\": \"lucia.martin.reforest@example.com\",\n  \"contrasena\": \"Bosque123\",\n  \"rol\": \"USER\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/usuarios",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "usuarios"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST OK - Crear usuario ADMIN",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Mario Sánchez Admin\",\n  \"email\": \"mario.admin.reforest@example.com\",\n  \"contrasena\": \"Admin123\",\n  \"rol\": \"ADMIN\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
