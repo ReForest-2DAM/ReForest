@@ -1,0 +1,1518 @@
+{
+  "info": {
+    "_postman_id": "7de37117-cf0a-47d5-ba76-63a704b5e30b",
+    "name": "ReForest API 2.0",
+    "description": "Colección completa para probar la API ReForest: Usuarios, Especies y Donaciones. Incluye peticiones con datos realistas. Los tests se añadirán en una fase posterior.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50232739",
+    "_collection_link": "https://go.postman.co/collection/50232739-7de37117-cf0a-47d5-ba76-63a704b5e30b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "POST OK - Crear usuario USER",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Lucía Martín Verde\",\n  \"email\": \"lucia.martin.reforest@example.com\",\n  \"contrasena\": \"Bosque123\",\n  \"rol\": \"USER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST OK - Crear usuario ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Mario Sánchez Admin\",\n  \"email\": \"mario.admin.reforest@example.com\",\n  \"contrasena\": \"Admin123\",\n  \"rol\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST 400 - Crear usuario inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"email\": \"email-no-valido\",\n  \"contrasena\": \"123\",\n  \"rol\": \"CLIENTE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL OK - Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET/:ID OK - Obtener usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/{{usuario_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuario_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET/:ID 404 - Obtener usuario inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT OK - Actualizar usuario completo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Lucía Martín Verde Actualizada\",\n  \"email\": \"lucia.martin.actualizada@example.com\",\n  \"contrasena\": \"Bosque456\",\n  \"rol\": \"USER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/{{usuario_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuario_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT 400 - Actualizar usuario inválido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"email\": \"email-no-valido\",\n  \"contrasena\": \"123\",\n  \"rol\": \"CLIENTE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/{{usuario_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuario_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT 404 - Actualizar usuario inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Lucía Martín Verde Actualizada\",\n  \"email\": \"lucia.martin.actualizada@example.com\",\n  \"contrasena\": \"Bosque456\",\n  \"rol\": \"USER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE OK - Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/{{usuario_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuario_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE 404 - Eliminar usuario inexistente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Operaciones CRUD de la entidad Usuario."
+    },
+    {
+      "name": "Especies",
+      "item": [
+        {
+          "name": "POST OK - Crear especie Encina",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has expected structure\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"nombre_comun\");\r",
+                  "    pm.expect(json).to.have.property(\"descripcion\");\r",
+                  "    pm.expect(json).to.have.property(\"precio_plantacion\");\r",
+                  "    pm.expect(json).to.have.property(\"zona_geografica\");\r",
+                  "    pm.expect(json).to.have.property(\"co2_anual_kg\");\r",
+                  "    pm.expect(json).to.have.property(\"altura_maxima_m\");\r",
+                  "    pm.expect(json).to.have.property(\"disponible\");\r",
+                  "    pm.expect(json).to.have.property(\"fecha_temporada\");\r",
+                  "    pm.expect(json).to.have.property(\"image_url\");\r",
+                  "\r",
+                  "    pm.environment.set(\"especie_id\", json.id);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_comun\": \"Encina mediterránea\",\n  \"descripcion\": \"Árbol autóctono muy resistente a la sequía, ideal para proyectos de reforestación en zonas mediterráneas.\",\n  \"precio_plantacion\": 24.75,\n  \"zona_geografica\": \"Mediterráneo\",\n  \"co2_anual_kg\": 28.5,\n  \"altura_maxima_m\": 25,\n  \"disponible\": true,\n  \"fecha_temporada\": \"2026-10-15\",\n  \"image_url\": \"https://res.cloudinary.com/demo/image/upload/v1700000000/reforest/encina.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/especies",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST 400 - Crear especie inválida",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an error object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_comun\": \"\",\n  \"descripcion\": \"Especie inválida para comprobar errores de validación.\",\n  \"precio_plantacion\": -10,\n  \"zona_geografica\": \"Mediterráneo\",\n  \"co2_anual_kg\": -3,\n  \"altura_maxima_m\": -1,\n  \"disponible\": true,\n  \"fecha_temporada\": \"2026-10-15\",\n  \"image_url\": \"https://example.com/invalid.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/especies",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL OK - Listar especies disponibles",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/especies",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET OK - Listar especies por disponibilidad",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All especies are available\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    json.forEach(especie => {\r",
+                  "        pm.expect(especie).to.have.property(\"disponible\");\r",
+                  "        pm.expect(especie.disponible).to.eql(true);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/especies?disponible=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies"
+              ],
+              "query": [
+                {
+                  "key": "disponible",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET OK - Listar especies por zona geográfica",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All especies belong to requested zone\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    json.forEach(especie => {\r",
+                  "        pm.expect(especie).to.have.property(\"zona_geografica\");\r",
+                  "\r",
+                  "        if (especie.zona_geografica) {\r",
+                  "            pm.expect(\r",
+                  "                especie.zona_geografica.toLowerCase()\r",
+                  "            ).to.include(\"europe\");\r",
+                  "        }\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/especies?zonaGeografica=Mediterráneo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies"
+              ],
+              "query": [
+                {
+                  "key": "zonaGeografica",
+                  "value": "Mediterráneo"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET/:ID OK - Obtener especie por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has expected structure\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json.id).to.eql(Number(pm.environment.get(\"especie_id\")));\r",
+                  "    pm.expect(json).to.have.property(\"nombre_comun\");\r",
+                  "    pm.expect(json).to.have.property(\"precio_plantacion\");\r",
+                  "    pm.expect(json).to.have.property(\"disponible\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/especies/{{especie_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies",
+                "{{especie_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET/:ID 404 - Obtener especie inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an error object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/especies/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT OK - Actualizar especie completa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has updated structure\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json.id).to.eql(Number(pm.environment.get(\"especie_id\")));\r",
+                  "    pm.expect(json).to.have.property(\"nombre_comun\");\r",
+                  "    pm.expect(json).to.have.property(\"precio_plantacion\");\r",
+                  "    pm.expect(json).to.have.property(\"zona_geografica\");\r",
+                  "    pm.expect(json).to.have.property(\"disponible\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_comun\": \"Encina mediterránea actualizada\",\n  \"descripcion\": \"Especie actualizada para comprobar la operación PUT de la API.\",\n  \"precio_plantacion\": 27.0,\n  \"zona_geografica\": \"Mediterráneo occidental\",\n  \"co2_anual_kg\": 30.0,\n  \"altura_maxima_m\": 26,\n  \"disponible\": true,\n  \"fecha_temporada\": \"2026-10-20\",\n  \"image_url\": \"https://res.cloudinary.com/demo/image/upload/v1700000000/reforest/encina-updated.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/especies/{{especie_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies",
+                "{{especie_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT 400 - Actualizar especie inválida",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an error object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_comun\": \"\",\n  \"descripcion\": \"Especie inválida para comprobar errores de validación.\",\n  \"precio_plantacion\": -10,\n  \"zona_geografica\": \"Mediterráneo\",\n  \"co2_anual_kg\": -3,\n  \"altura_maxima_m\": -1,\n  \"disponible\": true,\n  \"fecha_temporada\": \"2026-10-15\",\n  \"image_url\": \"https://example.com/invalid.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/especies/{{especie_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies",
+                "{{especie_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT 404 - Actualizar especie inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an error object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_comun\": \"Encina mediterránea actualizada\",\n  \"descripcion\": \"Especie actualizada para comprobar la operación PUT de la API.\",\n  \"precio_plantacion\": 27.0,\n  \"zona_geografica\": \"Mediterráneo occidental\",\n  \"co2_anual_kg\": 30.0,\n  \"altura_maxima_m\": 26,\n  \"disponible\": true,\n  \"fecha_temporada\": \"2026-10-20\",\n  \"image_url\": \"https://res.cloudinary.com/demo/image/upload/v1700000000/reforest/encina-updated.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/especies/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE OK - Desactivar especie",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/especies/{{especie_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies",
+                "{{especie_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE 404 - Desactivar especie inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an error object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/especies/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "especies",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Operaciones CRUD de la entidad Especie."
+    },
+    {
+      "name": "Donaciones",
+      "item": [
+        {
+          "name": "POST OK - Crear donación",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_donante\": \"Lucía Martín Verde\",\n  \"cantidad_arboles\": 6,\n  \"pagado\": true,\n  \"usuario\": {\n    \"id\": \"{{usuario_id}}\"\n  },\n  \"especie\": {\n    \"id\": \"{{especie_id}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/donaciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST 400 - Crear donación con referencias inexistentes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_donante\": \"\",\n  \"cantidad_arboles\": 0,\n  \"pagado\": false,\n  \"usuario\": {\n    \"id\": 999999\n  },\n  \"especie\": {\n    \"id\": 999999\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/donaciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL OK - Listar donaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/donaciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL OK - Listar donaciones por estado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/donaciones?estado=COMPLETADA",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "COMPLETADA"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL OK - Listar donaciones por usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/donaciones?usuarioId={{usuario_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones"
+              ],
+              "query": [
+                {
+                  "key": "usuarioId",
+                  "value": "{{usuario_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET/:ID OK - Obtener donación por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/donaciones/{{donacion_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones",
+                "{{donacion_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET/:ID 404 - Obtener donación inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/donaciones/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT OK - Actualizar donación completa",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_donante\": \"Lucía Martín Verde\",\n  \"cantidad_arboles\": 8,\n  \"estado\": \"COMPLETADA\",\n  \"pagado\": true,\n  \"usuario\": {\n    \"id\": \"{{usuario_id}}\"\n  },\n  \"especie\": {\n    \"id\": \"{{especie_id}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/donaciones/{{donacion_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones",
+                "{{donacion_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT 400 - Actualizar donación inválida",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre_donante\": \"\",\r\n  \"cantidad_arboles\": -3,\r\n  \"total_donado\": -50,\r\n  \"pagado\": true,\r\n  \"estado\": \"COMPLETADA\",\r\n  \"fecha\": \"2026-05-15\",\r\n  \"id_especie\": 999999,\r\n  \"id_usuario\": 999999\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/donaciones/{{donacion_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones",
+                "{{donacion_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT 404 - Actualizar donación inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_donante\": \"Lucía Martín Verde\",\n  \"cantidad_arboles\": 8,\n  \"estado\": \"COMPLETADA\",\n  \"pagado\": true,\n  \"usuario\": {\n    \"id\": \"{{usuario_id}}\"\n  },\n  \"especie\": {\n    \"id\": \"{{especie_id}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/donaciones/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE OK - Cancelar donación",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/donaciones/{{donacion_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones",
+                "{{donacion_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE 404 - Cancelar donación inexistente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/donaciones/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Operaciones CRUD de la entidad Donacion. Para crear donaciones necesitas tener creados un usuario y una especie, y copiar sus IDs a las variables usuario_id y especie_id."
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "usuario_id",
+      "value": "1"
+    },
+    {
+      "key": "especie_id",
+      "value": "1"
+    },
+    {
+      "key": "donacion_id",
+      "value": "1"
+    }
+  ]
+}
