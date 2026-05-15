@@ -1,10 +1,7 @@
 name: Postman API Tests
 
 on:
-  pull_request:
-    branches:
-      - main
-      - develop
+  push:
 
 jobs:
   postman-tests:
