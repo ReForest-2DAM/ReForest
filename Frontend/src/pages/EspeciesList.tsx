@@ -278,16 +278,14 @@ export default function EspeciesList() {
                 backgroundColor: '#fff',
                 boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                 overflow: 'hidden',
-                transition: 'all 0.3s ease',
+                transition: 'box-shadow 0.3s ease',
                 cursor: 'pointer'
               }}
               onClick={() => navigate(`/especies/${especie.id}`)}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
                 e.currentTarget.style.boxShadow = '0 12px 20px rgba(0,0,0,0.15)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
               }}
             >
