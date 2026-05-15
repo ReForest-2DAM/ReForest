@@ -29,7 +29,14 @@ export default function EspeciesList() {
   const [donacionEspecie, setDonacionEspecie] = useState<Especie | null>(null);
   const [donacionForm, setDonacionForm] = useState({ nombre_donante: '', cantidad_arboles: 1 });
   const [savingDonacion, setSavingDonacion] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const isAdmin = (() => {
+    try {
+      const data = localStorage.getItem('usuario');
+      if (!data || data === 'undefined' || data === 'null') return false;
+      const u = JSON.parse(data);
+      return u?.rol?.toUpperCase() === 'ADMIN';
+    } catch { return false; }
+  })();
 
   const handlePlantarClick = (especie: Especie) => {
     if (!isAuthenticated()) {
@@ -175,17 +182,7 @@ export default function EspeciesList() {
       }
     };
 
-    const checkAdmin = async () => {
-      try {
-        const usuario = await getCurrentUser();
-        setIsAdmin(usuario.rol.toUpperCase() === 'ADMIN');
-      } catch {
-        setIsAdmin(false);
-      }
-    };
-
     fetchEspecies();
-    checkAdmin();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
