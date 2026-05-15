@@ -6,6 +6,7 @@ import com.sanvalero.reforest.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Obtiene todos los usuarios
@@ -55,8 +59,17 @@ public class UsuarioService {
     public Usuario save(Usuario usuario) {
         logger.info("Creando nuevo usuario: {}", usuario.getEmail());
 
-        // Validaciones de negocio
+        // Rol por defecto si no viene informado
+        if (usuario.getRol() == null || usuario.getRol().isBlank()) {
+            usuario.setRol("USER");
+        }
+
+        // Validaciones de negocio (valida la contraseña en claro, antes de hashear)
         validarUsuario(usuario);
+
+        // [LEARN] BCrypt: hash de un solo sentido con salt. Nunca se guarda la
+        // contraseña en claro; al loguear se comparan hashes, no textos.
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         logger.info("Usuario creado con ID: {}", usuarioGuardado.getId());
@@ -87,7 +100,7 @@ public class UsuarioService {
 
         // Solo actualizar contraseña si viene informada
         if (usuarioActualizado.getContrasena() != null && !usuarioActualizado.getContrasena().isEmpty()) {
-            usuarioExistente.setContrasena(usuarioActualizado.getContrasena());
+            usuarioExistente.setContrasena(passwordEncoder.encode(usuarioActualizado.getContrasena()));
         }
 
         Usuario usuarioGuardado = usuarioRepository.save(usuarioExistente);
@@ -121,7 +134,7 @@ public class UsuarioService {
                     usuario.setEmail(nuevoEmail);
                     break;
                 case "contrasena":
-                    usuario.setContrasena((String) value);
+                    usuario.setContrasena(passwordEncoder.encode((String) value));
                     break;
                 case "rol":
                     String nuevoRol = (String) value;
