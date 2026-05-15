@@ -1,0 +1,46 @@
+name: Postman API Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  postman-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout app repository
+        uses: actions/checkout@v4
+
+      - name: Checkout config server repository
+        uses: actions/checkout@v4
+        with:
+          repository: ReForest/ReForestConfigServer
+          path: ReForestConfigServer
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Start config server
+        working-directory: ReForestConfigServer
+        run: |
+          nohup mvn spring-boot:run > config-server.log 2>&1 &
+          sleep 25
+
+      - name: Start API
+        run: |
+          nohup mvn spring-boot:run > api.log 2>&1 &
+          sleep 35
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman tests
+        run: |
+          newman run postman/ReForest.postman_collection.json \
+          -e postman/ReForest.postman_environment.json
