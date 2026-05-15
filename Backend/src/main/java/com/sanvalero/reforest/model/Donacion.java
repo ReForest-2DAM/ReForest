@@ -44,5 +44,3 @@ public class Donacion {
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 }
-
-// Prueba para PR de Actions
