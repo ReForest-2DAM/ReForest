@@ -1,0 +1,200 @@
+{
+  "info": {
+    "name": "ReForest API - v6 (Final, con Error 409)",
+    "description": "Colección final y completa, incluyendo todos los endpoints, filtros y ejemplos de respuestas de error 404 y 409.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Especies",
+      "item": [
+        {
+          "name": "GET - Listar todas las especies",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/especies", "host": ["{{base_url}}"], "path": ["especies"] } }
+        },
+        {
+          "name": "GET - Obtener especie por ID",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/especies/99", "host": ["{{base_url}}"], "path": ["especies", "99"] } },
+          "response": [
+            {
+              "name": "Éxito - Especie Encontrada",
+              "originalRequest": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/especies/1", "host": ["{{base_url}}"], "path": ["especies", "1"] } },
+              "status": "OK", "code": 200, "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n    \"id\": 1,\n    \"nombre_comun\": \"Roble\",\n    \"descripcion\": \"Árbol de hoja caduca, robusto y longevo\",\n    \"precio_plantacion\": 15.5,\n    \"zona_geografica\": \"Europa templada\",\n    \"co2_anual_kg\": 21.8,\n    \"altura_maxima_m\": 40,\n    \"disponible\": true,\n    \"fecha_temporada\": \"2024-03-15\",\n    \"image_url\": \"https://example.com/roble.jpg\"\n}"
+            },
+            {
+              "name": "Error - Especie No Encontrada",
+              "originalRequest": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/especies/99", "host": ["{{base_url}}"], "path": ["especies", "99"] } },
+              "status": "Not Found", "code": 404, "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n    \"code\": 404,\n    \"message\": \"Especie no encontrada con ID: 99\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST - Crear nueva especie",
+          "request": {
+            "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre_comun\": \"Pino Silvestre\",\n  \"descripcion\": \"Conífera de montaña, muy resistente.\",\n  \"precio_plantacion\": 12.00,\n  \"zona_geografica\": \"Zonas montañosas de Eurasia\",\n  \"co2_anual_kg\": 18.5,\n  \"altura_maxima_m\": 30,\n  \"disponible\": true,\n  \"fecha_temporada\": \"2024-02-01\",\n  \"image_url\": \"https://example.com/pino.jpg\"\n}" },
+            "url": { "raw": "{{base_url}}/especies", "host": ["{{base_url}}"], "path": ["especies"] }
+          }
+        },
+        {
+          "name": "PUT - Actualizar especie completa",
+          "request": {
+            "method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre_comun\": \"Pino Silvestre Actualizado\",\n  \"descripcion\": \"Conífera de montaña, muy resistente y de rápido crecimiento.\",\n  \"precio_plantacion\": 13.50,\n  \"zona_geografica\": \"Zonas montañosas de Eurasia y Pirineos\",\n  \"co2_anual_kg\": 19.0,\n  \"altura_maxima_m\": 35,\n  \"disponible\": false,\n  \"fecha_temporada\": \"2024-02-15\",\n  \"image_url\": \"https://example.com/pino-actualizado.jpg\"\n}" },
+            "url": { "raw": "{{base_url}}/especies/1", "host": ["{{base_url}}"], "path": ["especies", "1"] }
+          }
+        },
+        {
+          "name": "PATCH - Actualizar especie parcial",
+          "request": {
+            "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"precio_plantacion\": 14.00,\n  \"disponible\": false\n}" },
+            "url": { "raw": "{{base_url}}/especies/1", "host": ["{{base_url}}"], "path": ["especies", "1"] }
+          }
+        },
+        {
+          "name": "DELETE - Eliminar especie",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{base_url}}/especies/1", "host": ["{{base_url}}"], "path": ["especies", "1"] } }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "GET - Listar todos los usuarios",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/usuarios", "host": ["{{base_url}}"], "path": ["usuarios"] } }
+        },
+        {
+          "name": "GET - Obtener usuario por ID",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/usuarios/99", "host": ["{{base_url}}"], "path": ["usuarios", "99"] } },
+          "response": [
+            {
+              "name": "Éxito - Usuario Encontrado",
+              "originalRequest": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/usuarios/1", "host": ["{{base_url}}"], "path": ["usuarios", "1"] } },
+              "status": "OK", "code": 200, "_postman_previewlanguage": "json",
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n    \"id\": 1,\n    \"nombre\": \"Juan Pérez\",\n    \"email\": \"juan.perez@example.com\",\n    \"rol\": \"USER\"\n}"
+            },
+            {
+              "name": "Error - Usuario No Encontrado",
+              "originalRequest": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/usuarios/99", "host": ["{{base_url}}"], "path": ["usuarios", "99"] } },
+              "status": "Not Found", "code": 404, "_postman_previewlanguage": "json",
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n    \"code\": 404,\n    \"message\": \"Usuario no encontrado con ID: 99\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST - Crear nuevo usuario",
+          "request": {
+            "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Ana Torres\",\n  \"email\": \"ana.torres@example.com\",\n  \"contrasena\": \"securepass789\",\n  \"rol\": \"USER\"\n}" },
+            "url": { "raw": "{{base_url}}/usuarios", "host": ["{{base_url}}"], "path": ["usuarios"] }
+          }
+        },
+        {
+          "name": "POST - Crear usuario con email duplicado (Error 409)",
+          "request": {
+            "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Usuario Duplicado\",\n  \"email\": \"juan.perez@example.com\",\n  \"contrasena\": \"password123\",\n  \"rol\": \"USER\"\n}" },
+            "url": { "raw": "{{base_url}}/usuarios", "host": ["{{base_url}}"], "path": ["usuarios"] }
+          },
+          "response": [
+            {
+              "name": "Error - Email ya existe",
+              "originalRequest": { "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Usuario Duplicado\",\n  \"email\": \"juan.perez@example.com\",\n  \"contrasena\": \"password123\",\n  \"rol\": \"USER\"\n}" }, "url": { "raw": "{{base_url}}/usuarios", "host": ["{{base_url}}"], "path": ["usuarios"] } },
+              "status": "Conflict", "code": 409, "_postman_previewlanguage": "json",
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n    \"code\": 409,\n    \"message\": \"Conflicto de datos. Probablemente un campo único (como el email) ya existe.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT - Actualizar usuario completo",
+          "request": {
+            "method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Ana Torres García\",\n  \"email\": \"ana.torres.garcia@example.com\",\n  \"contrasena\": \"newsecurepass123\",\n  \"rol\": \"ADMIN\"\n}" },
+            "url": { "raw": "{{base_url}}/usuarios/1", "host": ["{{base_url}}"], "path": ["usuarios", "1"] }
+          }
+        },
+        {
+          "name": "PATCH - Actualizar usuario parcial",
+          "request": {
+            "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"rol\": \"USER\"\n}" },
+            "url": { "raw": "{{base_url}}/usuarios/1", "host": ["{{base_url}}"], "path": ["usuarios", "1"] }
+          }
+        },
+        {
+          "name": "DELETE - Eliminar usuario",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{base_url}}/usuarios/1", "host": ["{{base_url}}"], "path": ["usuarios", "1"] } }
+        }
+      ]
+    },
+    {
+      "name": "Donaciones",
+      "item": [
+        {
+          "name": "GET - Listar todas las donaciones",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/donaciones", "host": ["{{base_url}}"], "path": ["donaciones"] } }
+        },
+        {
+          "name": "GET - Obtener donacion por ID",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/donaciones/99", "host": ["{{base_url}}"], "path": ["donaciones", "99"] } },
+          "response": [
+            {
+              "name": "Éxito - Donación Encontrada",
+              "originalRequest": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/donaciones/1", "host": ["{{base_url}}"], "path": ["donaciones", "1"] } },
+              "status": "OK", "code": 200, "_postman_previewlanguage": "json",
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n    \"id\": 1,\n    \"fecha\": \"2024-05-21\",\n    \"nombre_donante\": \"Maria Rodriguez\",\n    \"cantidad_arboles\": 10,\n    \"total_donado\": 155.0,\n    \"estado\": \"COMPLETADA\",\n    \"pagado\": false,\n    \"especie\": { \"id\": 4, \"nombre_comun\": \"Roble\" },\n    \"usuario\": { \"id\": 1, \"nombre\": \"Juan Pérez\" }\n}"
+            },
+            {
+              "name": "Error - Donación No Encontrada",
+              "originalRequest": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/donaciones/99", "host": ["{{base_url}}"], "path": ["donaciones", "99"] } },
+              "status": "Not Found", "code": 404, "_postman_previewlanguage": "json",
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n    \"code\": 404,\n    \"message\": \"Donación no encontrada con ID: 99\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST - Crear nueva donacion",
+          "request": {
+            "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre_donante\": \"Pedro Martinez\",\n  \"cantidad_arboles\": 5,\n  \"especie\": {\n    \"id\": 1\n  },\n  \"usuario\": {\n    \"id\": 2\n  }\n}" },
+            "url": { "raw": "{{base_url}}/donaciones", "host": ["{{base_url}}"], "path": ["donaciones"] }
+          }
+        },
+        {
+          "name": "PUT - Actualizar donacion completa",
+          "request": {
+            "method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre_donante\": \"Pedro Martinez Actualizado\",\n  \"cantidad_arboles\": 8,\n  \"estado\": \"COMPLETADA\",\n  \"pagado\": true,\n  \"especie\": {\n    \"id\": 2\n  },\n  \"usuario\": {\n    \"id\": 1\n  }\n}" },
+            "url": { "raw": "{{base_url}}/donaciones/1", "host": ["{{base_url}}"], "path": ["donaciones", "1"] }
+          }
+        },
+        {
+          "name": "PATCH - Modificar donacion (marcar como pagada)",
+          "request": {
+            "method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": { "mode": "raw", "raw": "{\n  \"pagado\": true\n}" },
+            "url": { "raw": "{{base_url}}/donaciones/1", "host": ["{{base_url}}"], "path": ["donaciones", "1"] }
+          }
+        },
+        {
+          "name": "DELETE - Cancelar donacion (Borrado Lógico)",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{base_url}}/donaciones/1", "host": ["{{base_url}}"], "path": ["donaciones", "1"] } }
+        }
+      ]
+    }
+  ]
+}

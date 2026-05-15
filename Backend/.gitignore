@@ -1,0 +1,37 @@
+# Ficheros compilados de Java
+*.class
+
+# Ficheros de paquetes
+*.jar
+*.war
+*.ear
+
+# Directorio de salida de Maven
+/target/
+
+# Ficheros de log
+*.log
+logs/
+
+# Ficheros de configuración de IDEs
+# IntelliJ
+.idea/
+*.iml
+*.iws
+
+# VS Code
+.vscode/
+
+# NetBeans
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+
+# Ficheros del sistema operativo
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db

@@ -1,0 +1,674 @@
+openapi: 3.0.1
+info:
+  title: ReForest API
+  description: API para la gestión de la plataforma ReForest, que permite a los usuarios realizar donaciones para la reforestación y seguimiento de proyectos.
+  version: "0.0.1-SNAPSHOT"
+servers:
+  - url: http://localhost:8080
+    description: Servidor de desarrollo local
+tags:
+  - name: Usuarios
+    description: Gestión de usuarios del sistema
+  - name: Especies
+    description: Gestión de las especies de árboles disponibles para reforestación
+  - name: Donaciones
+    description: Gestión de las donaciones realizadas por los usuarios
+paths:
+  /usuarios:
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener lista de todos los usuarios
+      description: Devuelve una lista con todos los usuarios registrados en el sistema.
+      operationId: getAllUsuarios
+      responses:
+        '200':
+          description: Lista de usuarios obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+              example:
+                - id: 1
+                  nombre: "Juan Pérez"
+                  email: "juan.perez@example.com"
+                  rol: "USER"
+                - id: 2
+                  nombre: "Ana López"
+                  email: "ana.lopez@example.com"
+                  rol: "ADMIN"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Usuarios
+      summary: Crear un nuevo usuario
+      description: Registra un nuevo usuario en el sistema.
+      operationId: createUsuario
+      requestBody:
+        description: Datos del nuevo usuario a crear.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioInput'
+      responses:
+        '201':
+          description: Usuario creado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              example:
+                id: 3
+                nombre: "Carlos Gomez"
+                email: "carlos.gomez@example.com"
+                rol: "USER"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /usuarios/{id}:
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener un usuario por su ID
+      description: Devuelve los detalles de un usuario específico buscando por su ID.
+      operationId: getUsuarioById
+      parameters:
+        - name: id
+          in: path
+          description: ID del usuario a obtener
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              example:
+                id: 1
+                nombre: "Juan Pérez"
+                email: "juan.perez@example.com"
+                rol: "USER"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Usuarios
+      summary: Actualizar un usuario existente (completo)
+      description: Modifica todos los datos de un usuario existente buscando por su ID.
+      operationId: updateUsuario
+      parameters:
+        - name: id
+          in: path
+          description: ID del usuario a actualizar
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Objeto completo del usuario con los datos actualizados.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioInput'
+      responses:
+        '200':
+          description: Usuario actualizado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              example:
+                id: 1
+                nombre: "Juan Pérez Actualizado"
+                email: "juan.perez.new@example.com"
+                rol: "USER"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Usuarios
+      summary: Actualizar parcialmente un usuario
+      description: Actualiza uno o más campos de un usuario existente.
+      operationId: patchUsuario
+      parameters:
+        - name: id
+          in: path
+          description: ID del usuario a actualizar
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Un mapa de campos y valores a actualizar.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              example:
+                email: "nuevo.email@example.com"
+                nombre: "Nombre Actualizado"
+      responses:
+        '200':
+          description: Usuario actualizado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              example:
+                id: 1
+                nombre: "Juan Pérez"
+                email: "juan.perez.new@example.com"
+                rol: "USER"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Usuarios
+      summary: Eliminar un usuario por su ID
+      description: Elimina un usuario del sistema de forma permanente.
+      operationId: deleteUsuario
+      parameters:
+        - name: id
+          in: path
+          description: ID del usuario a eliminar
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Usuario eliminado con éxito. No hay contenido en la respuesta.
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /especies:
+    get:
+      tags:
+        - Especies
+      summary: Obtener lista de todas las especies
+      description: Devuelve una lista con todas las especies de árboles disponibles.
+      operationId: getAllEspecies
+      responses:
+        '200':
+          description: Lista de especies obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Especie'
+              example:
+                - id: 1
+                  nombreComun: "Pino Carrasco"
+                  precioPlantacion: 15.50
+                  disponible: true
+                - id: 2
+                  nombreComun: "Encina"
+                  precioPlantacion: 25.00
+                  disponible: false
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Especies
+      summary: Crear una nueva especie
+      description: Registra una nueva especie de árbol en el sistema.
+      operationId: createEspecie
+      requestBody:
+        description: Datos de la nueva especie a crear.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EspecieInput'
+      responses:
+        '201':
+          description: Especie creada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especie'
+              example:
+                id: 3
+                nombreComun: "Roble"
+                descripcion: "Árbol robusto de hoja caduca."
+                precioPlantacion: 30.00
+                zonaGeografica: "Clima Atlántico"
+                co2AnualKg: 25.0
+                alturaMaximaM: 40
+                disponible: true
+                fechaTemporada: "2026-10-01"
+                imageUrl: "http://example.com/images/roble.jpg"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /especies/{id}:
+    get:
+      tags:
+        - Especies
+      summary: Obtener una especie por su ID
+      description: Devuelve los detalles de una especie específica.
+      operationId: getEspecieById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Especie encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especie'
+              example:
+                id: 1
+                nombreComun: "Pino Carrasco"
+                descripcion: "Conífera resistente a la sequía."
+                precioPlantacion: 15.50
+                zonaGeografica: "Mediterráneo"
+                co2AnualKg: 22.5
+                alturaMaximaM: 20
+                disponible: true
+                fechaTemporada: "2026-09-15"
+                imageUrl: "http://example.com/images/pino.jpg"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Especies
+      summary: Actualizar una especie existente
+      operationId: updateEspecie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EspecieInput'
+      responses:
+        '200':
+          description: Especie actualizada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especie'
+              example:
+                id: 1
+                nombreComun: "Pino Carrasco (Actualizado)"
+                precioPlantacion: 16.00
+                disponible: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Especies
+      summary: Desactivar una especie (borrado lógico)
+      description: Realiza un borrado lógico de la especie, marcándola como 'no disponible'. La especie no se elimina de la base de datos y puede ser recuperada. Ya no aparecerá en las listas por defecto.
+      operationId: deleteEspecie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Especie desactivada con éxito.
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /donaciones:
+    get:
+      tags:
+        - Donaciones
+      summary: Obtener lista de todas las donaciones
+      operationId: getAllDonaciones
+      responses:
+        '200':
+          description: Lista de donaciones obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Donacion'
+              example:
+                - id: 1
+                  fecha: "2026-02-06"
+                  nombreDonante: "Ana López"
+                  cantidadArboles: 10
+                  totalDonado: 155.00
+                  estado: "completada"
+                  pagado: true
+                  id_especie: 1
+                  id_usuario: 2
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Donaciones
+      summary: Crear una nueva donación
+      operationId: createDonacion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DonacionInput'
+      responses:
+        '201':
+          description: Donación creada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donacion'
+              example:
+                id: 2
+                fecha: "2026-02-07"
+                nombreDonante: "Carlos Gomez"
+                cantidadArboles: 5
+                totalDonado: 77.50
+                estado: "pendiente"
+                pagado: false
+                id_especie: 1
+                id_usuario: 3
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /donaciones/{id}:
+    get:
+      tags:
+        - Donaciones
+      summary: Obtener una donación por su ID
+      operationId: getDonacionById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Donación encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donacion'
+              example:
+                id: 1
+                fecha: "2026-02-06"
+                nombreDonante: "Ana López"
+                cantidadArboles: 10
+                totalDonado: 155.00
+                estado: "completada"
+                pagado: true
+                id_especie: 1
+                id_usuario: 2
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Donaciones
+      summary: Eliminar una donación
+      operationId: deleteDonacion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Donación eliminada con éxito.
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Identificador único del usuario.
+          readOnly: true
+        nombre:
+          type: string
+          description: Nombre completo del usuario.
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          description: Dirección de correo electrónico del usuario.
+          example: "juan.perez@example.com"
+        rol:
+          type: string
+          description: Rol del usuario en el sistema.
+          enum: [USER, ADMIN]
+          example: "USER"
+    UsuarioInput:
+      type: object
+      properties:
+        nombre:
+          type: string
+          description: Nombre completo del usuario.
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          description: Dirección de correo electrónico del usuario.
+          example: "juan.perez@example.com"
+        contrasena:
+          type: string
+          format: password
+          description: Contraseña del usuario (debe tener al menos 6 caracteres).
+          example: "password123"
+          writeOnly: true
+        rol:
+          type: string
+          description: Rol del usuario en el sistema.
+          enum: [USER, ADMIN]
+          example: "USER"
+      required:
+        - nombre
+        - email
+        - contrasena
+        - rol
+    Especie:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        nombreComun:
+          type: string
+        descripcion:
+          type: string
+        precioPlantacion:
+          type: number
+          format: double
+        zonaGeografica:
+          type: string
+        co2AnualKg:
+          type: number
+          format: double
+        alturaMaximaM:
+          type: integer
+        disponible:
+          type: boolean
+        fechaTemporada:
+          type: string
+          format: date
+        imageUrl:
+          type: string
+          format: uri
+    EspecieInput:
+      type: object
+      properties:
+        nombreComun:
+          type: string
+        descripcion:
+          type: string
+        precioPlantacion:
+          type: number
+          format: double
+        zonaGeografica:
+          type: string
+        co2AnualKg:
+          type: number
+          format: double
+        alturaMaximaM:
+          type: integer
+        disponible:
+          type: boolean
+        fechaTemporada:
+          type: string
+          format: date
+        imageUrl:
+          type: string
+          format: uri
+      required:
+        - nombreComun
+        - precioPlantacion
+    Donacion:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        fecha:
+          type: string
+          format: date
+        nombreDonante:
+          type: string
+        cantidadArboles:
+          type: integer
+        totalDonado:
+          type: number
+          format: double
+        estado:
+          type: string
+        pagado:
+          type: boolean
+        id_especie:
+          type: integer
+          format: int64
+        id_usuario:
+          type: integer
+          format: int64
+    DonacionInput:
+      type: object
+      properties:
+        nombreDonante:
+          type: string
+        cantidadArboles:
+          type: integer
+        id_especie:
+          type: integer
+          format: int64
+        id_usuario:
+          type: integer
+          format: int64
+      required:
+        - nombreDonante
+        - cantidadArboles
+        - id_especie
+        - id_usuario
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: Un código de error numérico HTTP.
+          example: 404
+        message:
+          type: string
+          description: Una descripción del error legible por humanos.
+          example: "El recurso solicitado no fue encontrado."
+
+  responses:
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 404
+            message: "El recurso solicitado no se ha encontrado."
+    BadRequest:
+      description: Solicitud incorrecta
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 400
+            message: "Los datos de la solicitud son inválidos."
+    Conflict:
+      description: Conflicto de datos
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 409
+            message: "Conflicto de datos. Probablemente un campo único (como el email) ya existe."
+    InternalServerError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 500
+            message: "Ha ocurrido un error inesperado en el servidor."
