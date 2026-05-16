@@ -13,12 +13,32 @@
       "item": [
         {
           "name": "REGISTER OK",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Genera un número aleatorio\r",
+                  "const random = Math.floor(Math.random() * 100000);\r",
+                  "\r",
+                  "// Construye un email único\r",
+                  "const email = `cliente${random}@example.com`;\r",
+                  "\r",
+                  "// Guarda la variable en el entorno\r",
+                  "pm.environment.set(\"random_email\", email);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Cristina\",\r\n  \"email\": \"cristina@gmail.com\",\r\n  \"contrasena\": \"user123\"\r\n}",
+              "raw": "{\r\n  \"nombre\": \"Cristina\",\r\n  \"email\": {{random_email}},\r\n  \"contrasena\": \"user123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -149,7 +169,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre_comun\": \"Encina mediterránea\",\n  \"descripcion\": \"Árbol autóctono muy resistente a la sequía, ideal para proyectos de reforestación en zonas mediterráneas.\",\n  \"precio_plantacion\": 24.75,\n  \"zona_geografica\": \"Mediterráneo\",\n  \"co2_anual_kg\": 28.5,\n  \"altura_maxima_m\": 25,\n  \"disponible\": true,\n  \"fecha_temporada\": \"2026-10-15\",\n  \"image_url\": \"https://res.cloudinary.com/demo/image/upload/v1700000000/reforest/encina.jpg\"\n}",
+              "raw": "{\n  \"nombre_comun\": \"Encina mediterránea\",\n  \"descripcion\": \"Árbol autóctono muy resistente a la sequía, ideal para proyectos de reforestación en zonas mediterráneas.\",\n  \"precio_plantacion\": 24.75,\n  \"zona_geografica\": \"Mediterraneo\",\n  \"co2_anual_kg\": 28.5,\n  \"altura_maxima_m\": 25,\n  \"disponible\": true,\n  \"fecha_temporada\": \"2026-10-15\",\n  \"image_url\": \"https://res.cloudinary.com/demo/image/upload/v1700000000/reforest/encina.jpg\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -358,17 +378,13 @@
                   "    pm.expect(json).to.be.an(\"array\");\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"All especies belong to requested zone\", function () {\r",
-                  "    const json = pm.response.json();\r",
+                  "pm.test(\"All species belong to requested zone\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    const requestedZone = pm.request.url.query.get(\"zonaGeografica\");\r",
                   "\r",
-                  "    json.forEach(especie => {\r",
-                  "        pm.expect(especie).to.have.property(\"zona_geografica\");\r",
-                  "\r",
-                  "        if (especie.zona_geografica) {\r",
-                  "            pm.expect(\r",
-                  "                especie.zona_geografica.toLowerCase()\r",
-                  "            ).to.include(\"europe\");\r",
-                  "        }\r",
+                  "    response.forEach(function (especie) {\r",
+                  "        pm.expect(especie.zona_geografica.toLowerCase())\r",
+                  "            .to.eql(requestedZone.toLowerCase());\r",
                   "    });\r",
                   "});"
                 ],
@@ -394,7 +410,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/especies?zonaGeografica=Mediterráneo",
+              "raw": "{{base_url}}/especies?zonaGeografica=Mediterraneo",
               "host": [
                 "{{base_url}}"
               ],
@@ -404,7 +420,7 @@
               "query": [
                 {
                   "key": "zonaGeografica",
-                  "value": "Mediterráneo"
+                  "value": "Mediterraneo"
                 }
               ]
             }
