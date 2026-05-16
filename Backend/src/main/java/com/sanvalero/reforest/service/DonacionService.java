@@ -71,7 +71,7 @@ public class DonacionService {
                 .orElseThrow(() -> new EspecieNotFoundException(donacion.getEspecie().getId()));
 
         if (!especie.isDisponible()) {
-            throw new IllegalStateException("La especie '" + especie.getNombreComun() + "' no está disponible para donación.");
+            throw new IllegalStateException("The species '" + especie.getNombreComun() + "' is not available for donation.");
         }
 
         donacion.setUsuario(usuario);

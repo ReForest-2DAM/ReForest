@@ -29,7 +29,14 @@ export default function EspeciesList() {
   const [donacionEspecie, setDonacionEspecie] = useState<Especie | null>(null);
   const [donacionForm, setDonacionForm] = useState({ nombre_donante: '', cantidad_arboles: 1 });
   const [savingDonacion, setSavingDonacion] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const isAdmin = (() => {
+    try {
+      const data = localStorage.getItem('usuario');
+      if (!data || data === 'undefined' || data === 'null') return false;
+      const u = JSON.parse(data);
+      return u?.rol?.toUpperCase() === 'ADMIN';
+    } catch { return false; }
+  })();
 
   const handlePlantarClick = (especie: Especie) => {
     if (!isAuthenticated()) {
@@ -175,17 +182,7 @@ export default function EspeciesList() {
       }
     };
 
-    const checkAdmin = async () => {
-      try {
-        const usuario = await getCurrentUser();
-        setIsAdmin(usuario.rol.toUpperCase() === 'ADMIN');
-      } catch {
-        setIsAdmin(false);
-      }
-    };
-
     fetchEspecies();
-    checkAdmin();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -278,16 +275,14 @@ export default function EspeciesList() {
                 backgroundColor: '#fff',
                 boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                 overflow: 'hidden',
-                transition: 'all 0.3s ease',
+                transition: 'box-shadow 0.3s ease',
                 cursor: 'pointer'
               }}
               onClick={() => navigate(`/especies/${especie.id}`)}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
                 e.currentTarget.style.boxShadow = '0 12px 20px rgba(0,0,0,0.15)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
               }}
             >
