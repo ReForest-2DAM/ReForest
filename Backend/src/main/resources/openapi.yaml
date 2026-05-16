@@ -6,20 +6,94 @@ info:
 servers:
   - url: http://localhost:8080
     description: Servidor de desarrollo local
+
+security:
+  - bearerAuth: []
+
 tags:
+  - name: Autenticación
+    description: Registro e inicio de sesión de usuarios
   - name: Usuarios
     description: Gestión de usuarios del sistema
   - name: Especies
     description: Gestión de las especies de árboles disponibles para reforestación
   - name: Donaciones
     description: Gestión de las donaciones realizadas por los usuarios
+
 paths:
+  /auth/register:
+    post:
+      tags:
+        - Autenticación
+      summary: Registrar un nuevo usuario
+      description: Crea una cuenta de usuario con rol USER y devuelve un token JWT.
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuario registrado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              example:
+                token: "eyJhbGciOiJIUzI1NiJ9..."
+                id: 1
+                nombre: "Juan Pérez"
+                email: "juan.perez@example.com"
+                rol: "USER"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /auth/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Iniciar sesión
+      description: Autentica al usuario con email y contraseña y devuelve un token JWT.
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login correcto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              example:
+                token: "eyJhbGciOiJIUzI1NiJ9..."
+                id: 1
+                nombre: "Juan Pérez"
+                email: "juan.perez@example.com"
+                rol: "USER"
+        '401':
+          description: Credenciales incorrectas
+          content:
+            application/json:
+              example:
+                code: "UNAUTHORIZED"
+                message: "Credenciales incorrectas."
+
   /usuarios:
     get:
       tags:
         - Usuarios
       summary: Obtener lista de todos los usuarios
-      description: Devuelve una lista con todos los usuarios registrados en el sistema.
+      description: Devuelve una lista con todos los usuarios activos registrados en el sistema. Solo accesible para ADMIN.
       operationId: getAllUsuarios
       responses:
         '200':
@@ -35,17 +109,23 @@ paths:
                   nombre: "Juan Pérez"
                   email: "juan.perez@example.com"
                   rol: "USER"
+                  activo: true
                 - id: 2
                   nombre: "Ana López"
                   email: "ana.lopez@example.com"
                   rol: "ADMIN"
+                  activo: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
       tags:
         - Usuarios
       summary: Crear un nuevo usuario
-      description: Registra un nuevo usuario en el sistema.
+      description: Registra un nuevo usuario en el sistema. Solo accesible para ADMIN.
       operationId: createUsuario
       requestBody:
         description: Datos del nuevo usuario a crear.
@@ -66,8 +146,13 @@ paths:
                 nombre: "Carlos Gomez"
                 email: "carlos.gomez@example.com"
                 rol: "USER"
+                activo: true
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '409':
           $ref: '#/components/responses/Conflict'
         '500':
@@ -78,7 +163,7 @@ paths:
       tags:
         - Usuarios
       summary: Obtener un usuario por su ID
-      description: Devuelve los detalles de un usuario específico buscando por su ID.
+      description: Devuelve los detalles de un usuario específico buscando por su ID. Solo accesible para ADMIN.
       operationId: getUsuarioById
       parameters:
         - name: id
@@ -100,6 +185,11 @@ paths:
                 nombre: "Juan Pérez"
                 email: "juan.perez@example.com"
                 rol: "USER"
+                activo: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -108,7 +198,7 @@ paths:
       tags:
         - Usuarios
       summary: Actualizar un usuario existente (completo)
-      description: Modifica todos los datos de un usuario existente buscando por su ID.
+      description: Modifica todos los datos de un usuario existente buscando por su ID. Solo accesible para ADMIN.
       operationId: updateUsuario
       parameters:
         - name: id
@@ -137,8 +227,13 @@ paths:
                 nombre: "Juan Pérez Actualizado"
                 email: "juan.perez.new@example.com"
                 rol: "USER"
+                activo: true
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -147,7 +242,7 @@ paths:
       tags:
         - Usuarios
       summary: Actualizar parcialmente un usuario
-      description: Actualiza uno o más campos de un usuario existente.
+      description: Actualiza uno o más campos de un usuario existente. Solo accesible para ADMIN.
       operationId: patchUsuario
       parameters:
         - name: id
@@ -158,7 +253,7 @@ paths:
             type: integer
             format: int64
       requestBody:
-        description: Un mapa de campos y valores a actualizar.
+        description: Campos a actualizar (nombre, email, contrasena, rol).
         required: true
         content:
           application/json:
@@ -180,8 +275,13 @@ paths:
                 nombre: "Juan Pérez"
                 email: "juan.perez.new@example.com"
                 rol: "USER"
+                activo: true
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -189,20 +289,24 @@ paths:
     delete:
       tags:
         - Usuarios
-      summary: Eliminar un usuario por su ID
-      description: Elimina un usuario del sistema de forma permanente.
+      summary: Desactivar un usuario (borrado lógico)
+      description: Realiza un borrado lógico del usuario, marcándolo como inactivo. El usuario no se elimina de la base de datos. Solo accesible para ADMIN.
       operationId: deleteUsuario
       parameters:
         - name: id
           in: path
-          description: ID del usuario a eliminar
+          description: ID del usuario a desactivar
           required: true
           schema:
             type: integer
             format: int64
       responses:
         '204':
-          description: Usuario eliminado con éxito. No hay contenido en la respuesta.
+          description: Usuario desactivado con éxito. No hay contenido en la respuesta.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -213,8 +317,21 @@ paths:
       tags:
         - Especies
       summary: Obtener lista de todas las especies
-      description: Devuelve una lista con todas las especies de árboles disponibles.
+      description: Devuelve una lista con todas las especies de árboles. Se puede filtrar por disponibilidad y zona geográfica.
       operationId: getAllEspecies
+      parameters:
+        - name: disponible
+          in: query
+          description: Filtrar por disponibilidad (true/false)
+          required: false
+          schema:
+            type: boolean
+        - name: zonaGeografica
+          in: query
+          description: Filtrar por zona geográfica (búsqueda parcial)
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Lista de especies obtenida con éxito.
@@ -233,13 +350,15 @@ paths:
                   nombreComun: "Encina"
                   precioPlantacion: 25.00
                   disponible: false
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
       tags:
         - Especies
       summary: Crear una nueva especie
-      description: Registra una nueva especie de árbol en el sistema.
+      description: Registra una nueva especie de árbol en el sistema. Solo accesible para ADMIN.
       operationId: createEspecie
       requestBody:
         description: Datos de la nueva especie a crear.
@@ -268,6 +387,10 @@ paths:
                 imageUrl: "http://example.com/images/roble.jpg"
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -303,6 +426,8 @@ paths:
                 disponible: true
                 fechaTemporada: "2026-09-15"
                 imageUrl: "http://example.com/images/pino.jpg"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -311,6 +436,7 @@ paths:
       tags:
         - Especies
       summary: Actualizar una especie existente
+      description: Actualiza todos los datos de una especie existente. Solo accesible para ADMIN.
       operationId: updateEspecie
       parameters:
         - name: id
@@ -339,13 +465,58 @@ paths:
                 disponible: true
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Especies
+      summary: Actualizar parcialmente una especie
+      description: Actualiza uno o más campos de una especie existente. Solo accesible para ADMIN.
+      operationId: patchEspecie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Campos a actualizar (disponible, precioPlantacion, etc.).
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              example:
+                disponible: false
+                precioPlantacion: 18.00
+      responses:
+        '200':
+          description: Especie actualizada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especie'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     delete:
       tags:
         - Especies
       summary: Desactivar una especie (borrado lógico)
-      description: Realiza un borrado lógico de la especie, marcándola como 'no disponible'. La especie no se elimina de la base de datos y puede ser recuperada. Ya no aparecerá en las listas por defecto.
+      description: Realiza un borrado lógico de la especie, marcándola como no disponible. La especie no se elimina de la base de datos. Solo accesible para ADMIN.
       operationId: deleteEspecie
       parameters:
         - name: id
@@ -357,15 +528,36 @@ paths:
       responses:
         '204':
           description: Especie desactivada con éxito.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /donaciones:
     get:
       tags:
         - Donaciones
       summary: Obtener lista de todas las donaciones
+      description: Devuelve un listado de donaciones. Se puede filtrar por estado y/o ID de usuario.
       operationId: getAllDonaciones
+      parameters:
+        - name: estado
+          in: query
+          description: Filtrar por estado de la donación (ej. COMPLETADA, CANCELADA)
+          required: false
+          schema:
+            type: string
+        - name: usuarioId
+          in: query
+          description: Filtrar por el ID del usuario que realizó la donación
+          required: false
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Lista de donaciones obtenida con éxito.
@@ -381,16 +573,17 @@ paths:
                   nombreDonante: "Ana López"
                   cantidadArboles: 10
                   totalDonado: 155.00
-                  estado: "completada"
+                  estado: "COMPLETADA"
                   pagado: true
-                  id_especie: 1
-                  id_usuario: 2
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
       tags:
         - Donaciones
       summary: Crear una nueva donación
+      description: Crea una donación vinculada a un usuario y una especie. El total se calcula automáticamente.
       operationId: createDonacion
       requestBody:
         required: true
@@ -411,12 +604,29 @@ paths:
                 nombreDonante: "Carlos Gomez"
                 cantidadArboles: 5
                 totalDonado: 77.50
-                estado: "pendiente"
+                estado: "COMPLETADA"
                 pagado: false
-                id_especie: 1
-                id_usuario: 3
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Usuario o especie no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: La especie no está disponible para donaciones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 409
+                message: "The species 'Encina' is not available for donation."
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /donaciones/{id}:
     get:
@@ -444,16 +654,90 @@ paths:
                 nombreDonante: "Ana López"
                 cantidadArboles: 10
                 totalDonado: 155.00
-                estado: "completada"
+                estado: "COMPLETADA"
                 pagado: true
-                id_especie: 1
-                id_usuario: 2
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Donaciones
+      summary: Modificar una donación (completo)
+      description: Actualiza todos los datos de una donación existente.
+      operationId: updateDonacion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DonacionInput'
+      responses:
+        '200':
+          description: Donación modificada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donacion'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Donaciones
+      summary: Modificar una donación (parcial)
+      description: Actualiza uno o más campos de una donación, como el estado o si ha sido pagada.
+      operationId: patchDonacion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Campos a actualizar (estado, pagado, nombre_donante).
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              example:
+                estado: "CANCELADA"
+                pagado: true
+      responses:
+        '200':
+          description: Donación modificada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donacion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     delete:
       tags:
         - Donaciones
-      summary: Eliminar una donación
+      summary: Cancelar una donación (borrado lógico)
+      description: Realiza un borrado lógico de la donación, cambiando su estado a CANCELADA.
       operationId: deleteDonacion
       parameters:
         - name: id
@@ -464,12 +748,79 @@ paths:
             format: int64
       responses:
         '204':
-          description: Donación eliminada con éxito.
+          description: Donación cancelada con éxito.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - contrasena
+      properties:
+        email:
+          type: string
+          format: email
+          example: "juan.perez@example.com"
+        contrasena:
+          type: string
+          format: password
+          example: "password123"
+
+    RegisterRequest:
+      type: object
+      required:
+        - nombre
+        - email
+        - contrasena
+      properties:
+        nombre:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          example: "juan.perez@example.com"
+        contrasena:
+          type: string
+          format: password
+          example: "password123"
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token JWT para usar en las siguientes peticiones.
+          example: "eyJhbGciOiJIUzI1NiJ9..."
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          example: "juan.perez@example.com"
+        rol:
+          type: string
+          enum: [USER, ADMIN]
+          example: "USER"
+
     Usuario:
       type: object
       properties:
@@ -492,8 +843,18 @@ components:
           description: Rol del usuario en el sistema.
           enum: [USER, ADMIN]
           example: "USER"
+        activo:
+          type: boolean
+          description: Indica si el usuario está activo. Un usuario desactivado no puede iniciar sesión.
+          example: true
+
     UsuarioInput:
       type: object
+      required:
+        - nombre
+        - email
+        - contrasena
+        - rol
       properties:
         nombre:
           type: string
@@ -507,7 +868,7 @@ components:
         contrasena:
           type: string
           format: password
-          description: Contraseña del usuario (debe tener al menos 6 caracteres).
+          description: Contraseña del usuario (mínimo 6 caracteres).
           example: "password123"
           writeOnly: true
         rol:
@@ -515,11 +876,7 @@ components:
           description: Rol del usuario en el sistema.
           enum: [USER, ADMIN]
           example: "USER"
-      required:
-        - nombre
-        - email
-        - contrasena
-        - rol
+
     Especie:
       type: object
       properties:
@@ -549,8 +906,12 @@ components:
         imageUrl:
           type: string
           format: uri
+
     EspecieInput:
       type: object
+      required:
+        - nombreComun
+        - precioPlantacion
       properties:
         nombreComun:
           type: string
@@ -574,9 +935,7 @@ components:
         imageUrl:
           type: string
           format: uri
-      required:
-        - nombreComun
-        - precioPlantacion
+
     Donacion:
       type: object
       properties:
@@ -591,51 +950,78 @@ components:
           type: string
         cantidadArboles:
           type: integer
+          minimum: 1
         totalDonado:
           type: number
           format: double
         estado:
           type: string
+          enum: [COMPLETADA, CANCELADA, PENDIENTE]
         pagado:
           type: boolean
-        id_especie:
-          type: integer
-          format: int64
-        id_usuario:
-          type: integer
-          format: int64
+
     DonacionInput:
       type: object
-      properties:
-        nombreDonante:
-          type: string
-        cantidadArboles:
-          type: integer
-        id_especie:
-          type: integer
-          format: int64
-        id_usuario:
-          type: integer
-          format: int64
       required:
         - nombreDonante
         - cantidadArboles
-        - id_especie
-        - id_usuario
+        - especie
+        - usuario
+      properties:
+        nombreDonante:
+          type: string
+          example: "Ana López"
+        cantidadArboles:
+          type: integer
+          minimum: 1
+          example: 10
+        especie:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 1
+        usuario:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 2
+
     ErrorResponse:
       type: object
       properties:
         code:
           type: integer
           format: int32
-          description: Un código de error numérico HTTP.
+          description: Código de error HTTP.
           example: 404
         message:
           type: string
-          description: Una descripción del error legible por humanos.
+          description: Descripción del error.
           example: "El recurso solicitado no fue encontrado."
 
   responses:
+    Unauthorized:
+      description: No autenticado. Se requiere un token JWT válido.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 401
+            message: "No autenticado. Incluye un token JWT válido en la cabecera Authorization."
+    Forbidden:
+      description: No autorizado. No tienes permisos suficientes para esta operación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 403
+            message: "Acceso denegado. Se requiere rol ADMIN."
     NotFound:
       description: Recurso no encontrado
       content:
