@@ -2,6 +2,7 @@ package com.sanvalero.reforest.controller;
 
 import com.sanvalero.reforest.model.Especie;
 import com.sanvalero.reforest.service.EspecieService;
+import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,7 +20,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/especies")
-@CrossOrigin(origins = "*")
 @Tag(name = "Especies", description = "Operaciones sobre el catálogo de especies arbóreas")
 public class EspecieController {
 
@@ -61,7 +61,7 @@ public class EspecieController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<Especie> crear(@RequestBody Especie especie) {
+    public ResponseEntity<Especie> crear(@Valid @RequestBody Especie especie) {
         Especie nuevaEspecie = especieService.save(especie);
         return new ResponseEntity<>(nuevaEspecie, HttpStatus.CREATED);
     }
@@ -74,7 +74,7 @@ public class EspecieController {
                     content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Especie> modificar(@PathVariable long id, @RequestBody Especie especie) {
+    public ResponseEntity<Especie> modificar(@PathVariable long id, @Valid @RequestBody Especie especie) {
         Especie especieActualizada = especieService.update(id, especie);
         return ResponseEntity.ok(especieActualizada);
     }

@@ -4,7 +4,7 @@ package com.sanvalero.reforest.exception;
 public class DonacionNotFoundException extends RuntimeException {
 
     public DonacionNotFoundException(long id) {
-        super("Donación no encontrada con ID: " + id);
+        super("Donation not found with ID: " + id);
     }
 
     public DonacionNotFoundException(String message) {

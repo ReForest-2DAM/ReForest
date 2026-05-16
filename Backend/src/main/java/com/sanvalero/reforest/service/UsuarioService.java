@@ -6,6 +6,7 @@ import com.sanvalero.reforest.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     /**
      * Obtiene todos los usuarios
      * @return Lista de todos los usuarios
@@ -28,7 +32,7 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<Usuario> findAll() {
         logger.info("Obteniendo todos los usuarios");
-        return usuarioRepository.findAll();
+        return usuarioRepository.findByActivoTrue();
     }
 
     /**
@@ -48,6 +52,21 @@ public class UsuarioService {
     }
 
     /**
+     * Busca un usuario por su email
+     * @param email Email del usuario
+     * @return Usuario encontrado
+     * @throws UsuarioNotFoundException si no existe
+     */
+    @Transactional(readOnly = true)
+    public Usuario findByEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.error("Usuario no encontrado con email: {}", email);
+                    return new UsuarioNotFoundException(0L);
+                });
+    }
+
+    /**
      * Crea un nuevo usuario
      * @param usuario Datos del usuario a crear
      * @return Usuario creado con ID asignado
@@ -55,8 +74,17 @@ public class UsuarioService {
     public Usuario save(Usuario usuario) {
         logger.info("Creando nuevo usuario: {}", usuario.getEmail());
 
-        // Validaciones de negocio
+        // Rol por defecto si no viene informado
+        if (usuario.getRol() == null || usuario.getRol().isBlank()) {
+            usuario.setRol("USER");
+        }
+
+        // Validaciones de negocio (valida la contraseña en claro, antes de hashear)
         validarUsuario(usuario);
+
+        // [LEARN] BCrypt: hash de un solo sentido con salt. Nunca se guarda la
+        // contraseña en claro; al loguear se comparan hashes, no textos.
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         logger.info("Usuario creado con ID: {}", usuarioGuardado.getId());
@@ -87,7 +115,7 @@ public class UsuarioService {
 
         // Solo actualizar contraseña si viene informada
         if (usuarioActualizado.getContrasena() != null && !usuarioActualizado.getContrasena().isEmpty()) {
-            usuarioExistente.setContrasena(usuarioActualizado.getContrasena());
+            usuarioExistente.setContrasena(passwordEncoder.encode(usuarioActualizado.getContrasena()));
         }
 
         Usuario usuarioGuardado = usuarioRepository.save(usuarioExistente);
@@ -121,7 +149,7 @@ public class UsuarioService {
                     usuario.setEmail(nuevoEmail);
                     break;
                 case "contrasena":
-                    usuario.setContrasena((String) value);
+                    usuario.setContrasena(passwordEncoder.encode((String) value));
                     break;
                 case "rol":
                     String nuevoRol = (String) value;
@@ -150,11 +178,10 @@ public class UsuarioService {
     public void delete(long id) {
         logger.info("Eliminando usuario con ID: {}", id);
 
-        // Verificar que el usuario existe
         Usuario usuario = findById(id);
-
-        usuarioRepository.delete(usuario);
-        logger.info("Usuario eliminado con ID: {}", id);
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
+        logger.info("Usuario desactivado con ID: {}", id);
     }
 
     /**
@@ -209,8 +236,8 @@ public class UsuarioService {
         }
 
         // Validar que el rol sea uno de los permitidos
-        if (!rol.equals("USER") && !rol.equals("ADMIN")) {
-            throw new IllegalArgumentException("El rol debe ser USER o ADMIN");
+        if (!rol.equals("USER") && !rol.equals("ROLE_ADMIN")) {
+            throw new IllegalArgumentException("Role must be USER or ROLE_ADMIN");
         }
     }
 }

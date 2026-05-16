@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,7 @@ public class DonacionController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<Donacion> crear(@RequestBody Donacion donacion) {
+    public ResponseEntity<Donacion> crear(@Valid @RequestBody Donacion donacion) {
         Donacion nuevaDonacion = donacionService.save(donacion);
         return new ResponseEntity<>(nuevaDonacion, HttpStatus.CREATED);
     }
@@ -75,7 +76,7 @@ public class DonacionController {
                     content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Donacion> modificar(@PathVariable long id, @RequestBody Donacion donacion) {
+    public ResponseEntity<Donacion> modificar(@PathVariable long id, @Valid @RequestBody Donacion donacion) {
         Donacion donacionActualizada = donacionService.update(id, donacion);
         return ResponseEntity.ok(donacionActualizada);
     }
@@ -93,7 +94,8 @@ public class DonacionController {
         return ResponseEntity.ok(donacionActualizada);
     }
 
-    @Operation(summary = "Eliminar una donación (Borrado lógico)", description = "Realiza un borrado lógico de la donación, cambiando su estado a 'CANCELADA'.")
+    @Operation(summary = "Eliminar una donación (Borrado lógico)", description = "Realiza un borrado" +
+            " lógico de la donación, cambiando su estado a 'CANCELADA'.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Donación cancelada correctamente"),
             @ApiResponse(responseCode = "404", description = "Donación no encontrada",

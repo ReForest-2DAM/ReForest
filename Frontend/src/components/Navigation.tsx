@@ -1,21 +1,37 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { logout, isAuthenticated } from '../services/authService';
+import { logout, isAuthenticated, getCurrentUser } from '../services/authService';
 import { useTranslation } from '../i18n/LanguageContext';
 
 export default function Navigation() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
+  const [isAdmin, setIsAdmin] = useState(false);
   const { language, toggleLanguage, t } = useTranslation();
 
   useEffect(() => {
-    const handleAuthChange = () => setIsLoggedIn(isAuthenticated());
+    const handleAuthChange = () => {
+      setIsLoggedIn(isAuthenticated());
+      checkAdmin();
+    };
+
+    const checkAdmin = async () => {
+      try {
+        const u = await getCurrentUser();
+        setIsAdmin(u.rol === 'ROLE_ADMIN');
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdmin();
     window.addEventListener('auth-change', handleAuthChange);
     return () => window.removeEventListener('auth-change', handleAuthChange);
   }, []);
 
   const handleLogout = () => {
     logout();
+    setIsAdmin(false);
     navigate('/login');
   };
 
@@ -30,6 +46,14 @@ export default function Navigation() {
           <Link to="/especies" style={styles.link}>{t('nav.especies')}</Link>
           <Link to="/donaciones" style={styles.link}>{t('nav.donaciones')}</Link>
 
+          {isLoggedIn && (
+            <Link to="/dashboard" style={styles.link}>📊 Dashboard</Link>
+          )}
+
+          {isLoggedIn && isAdmin && (
+            <Link to="/usuarios" style={styles.link}>👥 Usuarios</Link>
+          )}
+
           <button onClick={toggleLanguage} style={styles.langBtn}>
             🌐 {language === 'es' ? 'EN' : 'ES'}
           </button>
@@ -39,9 +63,7 @@ export default function Navigation() {
               {t('nav.cerrarSesion')}
             </button>
           ) : (
-            <>
-              <Link to="/login" style={styles.link}>{t('nav.login')}</Link>
-            </>
+            <Link to="/login" style={styles.link}>{t('nav.login')}</Link>
           )}
         </div>
       </div>
