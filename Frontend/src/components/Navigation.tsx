@@ -18,7 +18,7 @@ export default function Navigation() {
     const checkAdmin = async () => {
       try {
         const u = await getCurrentUser();
-        setIsAdmin(u.rol.toUpperCase() === 'ADMIN');
+        setIsAdmin(u.rol === 'ROLE_ADMIN');
       } catch {
         setIsAdmin(false);
       }

@@ -20,7 +20,7 @@ export default function UsuariosList() {
     const fetchData = async () => {
       try {
         const usuario = await getCurrentUser();
-        if (usuario.rol.toUpperCase() !== 'ADMIN') {
+        if (usuario.rol !== 'ROLE_ADMIN') {
           setError('No tienes permisos para acceder a esta página.');
           setLoading(false);
           return;
@@ -184,14 +184,14 @@ export default function UsuariosList() {
               <div>
                 <p style={{ fontSize: '12px', color: '#999', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>Rol</p>
                 <span style={{
-                  backgroundColor: usuario.rol.toUpperCase() === 'ADMIN' ? '#d4edda' : '#cce5ff',
-                  color: usuario.rol.toUpperCase() === 'ADMIN' ? '#155724' : '#004085',
+                  backgroundColor: usuario.rol === 'ROLE_ADMIN' ? '#d4edda' : '#cce5ff',
+                  color: usuario.rol === 'ROLE_ADMIN' ? '#155724' : '#004085',
                   padding: '4px 12px',
                   borderRadius: '12px',
                   fontSize: '13px',
                   fontWeight: 'bold'
                 }}>
-                  {usuario.rol.toUpperCase() === 'ADMIN' ? '🔑 ADMIN' : '👤 USER'}
+                  {usuario.rol === 'ROLE_ADMIN' ? '🔑 ADMIN' : '👤 USER'}
                 </span>
               </div>
 
@@ -259,7 +259,7 @@ export default function UsuariosList() {
           </div>
           <div>
             <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2d6a4f', margin: '0 0 0.5rem 0' }}>
-              {usuarios.filter(u => u.rol.toUpperCase() === 'ADMIN').length}
+              {usuarios.filter(u => u.rol === 'ROLE_ADMIN').length}
             </p>
             <p style={{ color: '#555' }}>🔑 Administradores</p>
           </div>

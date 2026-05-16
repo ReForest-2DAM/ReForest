@@ -63,8 +63,8 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/openapi.yaml").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(HttpMethod.GET, "/especies", "/especies/**").permitAll()
-                .requestMatchers("/especies/**").hasRole("ADMIN")
-                .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                .requestMatchers("/especies/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/usuarios/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/donaciones/**").authenticated()
                 .anyRequest().authenticated())
             .exceptionHandling(e -> e

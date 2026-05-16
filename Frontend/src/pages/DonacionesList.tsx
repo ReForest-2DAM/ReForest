@@ -19,7 +19,7 @@ export default function DonacionesList() {
     const fetchDonaciones = async () => {
       try {
         const usuario = await getCurrentUser();
-        const esAdmin = usuario.rol.toUpperCase() === 'ADMIN';
+        const esAdmin = usuario.rol === 'ROLE_ADMIN';
         setIsAdmin(esAdmin);
 
         // Obtener todas las donaciones

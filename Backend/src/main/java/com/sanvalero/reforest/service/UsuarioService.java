@@ -236,8 +236,8 @@ public class UsuarioService {
         }
 
         // Validar que el rol sea uno de los permitidos
-        if (!rol.equals("USER") && !rol.equals("ADMIN")) {
-            throw new IllegalArgumentException("El rol debe ser USER o ADMIN");
+        if (!rol.equals("USER") && !rol.equals("ROLE_ADMIN")) {
+            throw new IllegalArgumentException("Role must be USER or ROLE_ADMIN");
         }
     }
 }

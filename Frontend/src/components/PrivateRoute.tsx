@@ -17,7 +17,7 @@ export default function PrivateRoute({ children, requireAdmin = false }: Props) 
     }
     if (requireAdmin) {
       getCurrentUser().then(u => {
-        setAllowed(u.rol.toUpperCase() === 'ADMIN');
+        setAllowed(u.rol === 'ROLE_ADMIN');
       }).catch(() => setAllowed(false));
     } else {
       setAllowed(true);

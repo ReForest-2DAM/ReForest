@@ -24,9 +24,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) {
         Usuario u = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-        // [LEARN] Spring Security espera el prefijo ROLE_ para usar hasRole(...)
         String rol = u.getRol() != null ? u.getRol() : "USER";
+        String authority = rol.startsWith("ROLE_") ? rol : "ROLE_" + rol;
         return new User(u.getEmail(), u.getContrasena(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + rol)));
+                List.of(new SimpleGrantedAuthority(authority)));
     }
 }
