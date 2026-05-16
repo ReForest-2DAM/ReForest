@@ -31,4 +31,7 @@ public class Usuario {
 
     @Column(name = "rol", nullable = false)
     private String rol = "USER";
+
+    @Column(name = "activo", nullable = false)
+    private boolean activo = true;
 }

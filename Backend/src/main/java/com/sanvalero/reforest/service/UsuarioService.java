@@ -32,7 +32,7 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<Usuario> findAll() {
         logger.info("Obteniendo todos los usuarios");
-        return usuarioRepository.findAll();
+        return usuarioRepository.findByActivoTrue();
     }
 
     /**
@@ -178,11 +178,10 @@ public class UsuarioService {
     public void delete(long id) {
         logger.info("Eliminando usuario con ID: {}", id);
 
-        // Verificar que el usuario existe
         Usuario usuario = findById(id);
-
-        usuarioRepository.delete(usuario);
-        logger.info("Usuario eliminado con ID: {}", id);
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
+        logger.info("Usuario desactivado con ID: {}", id);
     }
 
     /**
