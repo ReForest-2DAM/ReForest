@@ -1,75 +1,83 @@
-# React + TypeScript + Vite
+# ReForest — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web SPA construida con React 19 y TypeScript. Permite a los usuarios autenticarse, consultar especies disponibles y gestionar donaciones.
 
-Currently, two official plugins are available:
+## Stack técnico
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Tecnología | Versión | Uso |
+|---|---|---|
+| React | 19 | Framework UI |
+| TypeScript | 5.9 | Tipado estático |
+| Vite | 7 | Bundler y servidor de desarrollo |
+| React Router DOM | 7 | Navegación entre páginas |
+| Axios | 1.x | Peticiones HTTP al backend |
 
-## React Compiler
+## Arrancar en local
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+La aplicación queda disponible en `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Requiere el backend activo en `http://localhost:8080`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Scripts disponibles
+
+| Comando | Descripción |
+|---|---|
+| `npm run dev` | Servidor de desarrollo con HMR |
+| `npm run build` | Compilar para producción (carpeta `dist/`) |
+| `npm run preview` | Previsualizar el build de producción |
+| `npm run lint` | Ejecutar ESLint |
+
+## Estructura del proyecto
+
 ```
+src/
+├── components/
+│   ├── Navigation.tsx    # Barra de navegación con enlaces y botón de logout
+│   └── PrivateRoute.tsx  # HOC que redirige a login si no hay sesión activa
+├── config/
+│   └── apiClient.ts      # Instancia de Axios con interceptor JWT
+├── i18n/                 # Traducciones español / inglés
+├── pages/
+│   ├── Dashboard.tsx     # Página de inicio tras login
+│   ├── DonacionesList.tsx
+│   ├── EspeciesList.tsx
+│   └── UsuariosList.tsx
+├── services/
+│   ├── authService.ts    # Login, registro, logout
+│   └── index.ts          # Servicios de la API (especies, donaciones, usuarios)
+├── types/                # Tipos TypeScript compartidos
+├── App.tsx               # Definición de rutas
+└── main.tsx              # Punto de entrada
+```
+
+## Autenticación
+
+Al hacer login, el token JWT se guarda en `localStorage`. El `apiClient` de Axios incluye automáticamente el token en la cabecera `Authorization: Bearer <token>` de cada petición.
+
+Al cerrar sesión o al recibir un 401, el token se elimina y el usuario es redirigido al login.
+
+Las rutas protegidas usan el componente `PrivateRoute`, que comprueba si hay token antes de renderizar la página.
+
+## Internacionalización
+
+La interfaz está disponible en español e inglés. Las traducciones están en `src/i18n/` y se accede a ellas mediante el hook `useTranslation`.
+
+## Despliegue con Docker
+
+```bash
+docker build -t reforest-frontend .
+docker run -p 80:80 reforest-frontend
+```
+
+O usando Docker Compose desde la raíz del repositorio:
+
+```bash
+docker-compose -f docker-compose.prod.yml up --build
+```
+
+La imagen usa Nginx para servir el build estático. La URL del backend se configura en tiempo de build mediante la variable de entorno `VITE_API_URL`.
