@@ -1,6 +1,8 @@
 package com.sanvalero.reforest.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,9 +23,11 @@ public class Donacion {
     @Column(name = "fecha")
     private LocalDate fecha = LocalDate.now();
 
+    @NotBlank(message = "El nombre del donante es obligatorio")
     @Column(name = "nombre_donante", nullable = false)
     private String nombreDonante;
 
+    @Min(value = 1, message = "La cantidad de árboles debe ser al menos 1")
     @Column(name = "cantidad_arboles", nullable = false)
     private int cantidadArboles;
 
