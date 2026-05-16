@@ -60,7 +60,7 @@ export default function Dashboard() {
       try {
         const user = await getCurrentUser();
         setCurrentUser(user);
-        const admin = user.rol.toUpperCase() === 'ADMIN';
+        const admin = user.rol === 'ROLE_ADMIN';
         setIsAdmin(admin);
 
         const [donData, espData] = await Promise.all([

@@ -34,7 +34,7 @@ export default function EspeciesList() {
       const data = localStorage.getItem('usuario');
       if (!data || data === 'undefined' || data === 'null') return false;
       const u = JSON.parse(data);
-      return u?.rol?.toUpperCase() === 'ADMIN';
+      return u?.rol === 'ROLE_ADMIN';
     } catch { return false; }
   })();
 
