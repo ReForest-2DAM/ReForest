@@ -38,7 +38,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Cristina\",\r\n  \"email\": {{random_email}},\r\n  \"contrasena\": \"user123\"\r\n}",
+              "raw": "{\r\n  \"nombre\": \"Cristina\",\r\n  \"email\": \"{{random_email}}\",\r\n  \"contrasena\": \"user123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -65,15 +65,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
+                  "pm.test(\"Status 200 OK\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
                   "});\r",
                   "\r",
                   "const response = pm.response.json();\r",
                   "\r",
-                  "console.log(response);\r",
+                  "pm.expect(response).to.have.property(\"token\");\r",
                   "\r",
-                  "pm.collectionVariables.set(\"token\", response.token);\r",
                   "pm.environment.set(\"token\", response.token);"
                 ],
                 "type": "text/javascript",
@@ -113,12 +112,131 @@
             }
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "Especies",
-      "item": [
+        },
+        {
+          "name": "POST OK - Crear un nuevo usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201 Created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Estructura de usuario correcta\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"nombre\");\r",
+                  "    pm.expect(json).to.have.property(\"email\");\r",
+                  "    pm.expect(json).to.have.property(\"rol\");\r",
+                  "\r",
+                  "    pm.environment.set(\"usuario_id\", json.id);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const random = Math.floor(Math.random() * 100000);\r",
+                  "\r",
+                  "const email = `usuario${random}@example.com`;\r",
+                  "\r",
+                  "pm.environment.set(\"random_user_email\", email);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Lucía Martín Verde\",\r\n  \"email\": \"{{random_user_email}}\",\r\n  \"contrasena\": \"Bosque123\",\r\n  \"rol\": \"USER\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST 400 - Crear usuario inválido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"email\": \"email-no-valido\",\n  \"contrasena\": \"123\",\n  \"rol\": \"CLIENTE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
         {
           "name": "POST OK - Crear especie Encina",
           "event": [
@@ -126,11 +244,11 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 201\", function () {\r",
-                  "    pm.response.to.have.status(201);\r",
+                  "pm.test(\"Status 200 o 201\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response has expected structure\", function () {\r",
+                  "pm.test(\"Estructura de especie correcta\", function () {\r",
                   "    const json = pm.response.json();\r",
                   "\r",
                   "    pm.expect(json).to.have.property(\"id\");\r",
@@ -195,13 +313,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400\", function () {\r",
+                  "pm.test(\"Status 400 Bad Request\", function () {\r",
                   "    pm.response.to.have.status(400);\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response is an error object\", function () {\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
                   "    const json = pm.response.json();\r",
-                  "\r",
                   "    pm.expect(json).to.be.an(\"object\");\r",
                   "});"
                 ],
@@ -247,20 +364,159 @@
           "response": []
         },
         {
+          "name": "POST OK - Crear donación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201 Created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Estructura de donación correcta\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"nombre_donante\");\r",
+                  "    pm.expect(json).to.have.property(\"cantidad_arboles\");\r",
+                  "    pm.expect(json).to.have.property(\"estado\");\r",
+                  "    pm.expect(json).to.have.property(\"pagado\");\r",
+                  "\r",
+                  "    pm.expect(json.id).to.be.a(\"number\");\r",
+                  "    pm.expect(json.nombre_donante).to.be.a(\"string\");\r",
+                  "    pm.expect(json.cantidad_arboles).to.be.a(\"number\");\r",
+                  "    pm.expect(json.estado).to.be.a(\"string\");\r",
+                  "    pm.expect(json.pagado).to.be.a(\"boolean\");\r",
+                  "\r",
+                  "    pm.environment.set(\"donacion_id\", json.id);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_donante\": \"Lucía Martín Verde\",\n  \"cantidad_arboles\": 6,\n  \"pagado\": true,\n  \"usuario\": {\n    \"id\": {{usuario_id}}\n  },\n  \"especie\": {\n    \"id\": {{especie_id}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/donaciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST 400 - Crear donación con referencias inexistentes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_donante\": \"\",\n  \"cantidad_arboles\": 0,\n  \"pagado\": false,\n  \"usuario\": {\n    \"id\": {{usuario_id}}\n  },\n  \"especie\": {\n    \"id\": {{especie_id}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/donaciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donaciones"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Especies",
+      "item": [
+        {
           "name": "GET ALL OK - Listar especies disponibles",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
+                  "pm.test(\"Status 200 OK\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response is an array\", function () {\r",
+                  "pm.test(\"La respuesta es un array de especies\", function () {\r",
                   "    const json = pm.response.json();\r",
                   "\r",
                   "    pm.expect(json).to.be.an(\"array\");\r",
+                  "\r",
+                  "    json.forEach(especie => {\r",
+                  "        pm.expect(especie).to.have.property(\"id\");\r",
+                  "        pm.expect(especie).to.have.property(\"nombre_comun\");\r",
+                  "        pm.expect(especie).to.have.property(\"zona_geografica\");\r",
+                  "        pm.expect(especie).to.have.property(\"disponible\");\r",
+                  "    });\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -307,13 +563,13 @@
                   "    pm.response.to.have.status(200);\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response is an array\", function () {\r",
+                  "pm.test(\"La respuesta es un array\", function () {\r",
                   "    const json = pm.response.json();\r",
                   "\r",
                   "    pm.expect(json).to.be.an(\"array\");\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"All especies are available\", function () {\r",
+                  "pm.test(\"Todas las especies están disponibles\", function () {\r",
                   "    const json = pm.response.json();\r",
                   "\r",
                   "    json.forEach(especie => {\r",
@@ -372,13 +628,13 @@
                   "    pm.response.to.have.status(200);\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response is an array\", function () {\r",
+                  "pm.test(\"La respuesta es un array\", function () {\r",
                   "    const json = pm.response.json();\r",
                   "\r",
                   "    pm.expect(json).to.be.an(\"array\");\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"All species belong to requested zone\", function () {\r",
+                  "pm.test(\"Todas las especies pertenecen a la zona solicitada\", function () {\r",
                   "    const response = pm.response.json();\r",
                   "    const requestedZone = pm.request.url.query.get(\"zonaGeografica\");\r",
                   "\r",
@@ -438,7 +694,7 @@
                   "    pm.response.to.have.status(200);\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response has expected structure\", function () {\r",
+                  "pm.test(\"Estructura de especie correcta\", function () {\r",
                   "    const json = pm.response.json();\r",
                   "\r",
                   "    pm.expect(json).to.have.property(\"id\");\r",
@@ -544,7 +800,7 @@
                   "    pm.response.to.have.status(200);\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response has updated structure\", function () {\r",
+                  "pm.test(\"Especie actualizada con estructura correcta\", function () {\r",
                   "    const json = pm.response.json();\r",
                   "\r",
                   "    pm.expect(json).to.have.property(\"id\");\r",
@@ -822,81 +1078,36 @@
       "name": "Donaciones",
       "item": [
         {
-          "name": "POST OK - Crear donación",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre_donante\": \"Lucía Martín Verde\",\n  \"cantidad_arboles\": 6,\n  \"pagado\": true,\n  \"usuario\": {\n    \"id\": \"{{usuario_id}}\"\n  },\n  \"especie\": {\n    \"id\": \"{{especie_id}}\"\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/donaciones",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "donaciones"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST 400 - Crear donación con referencias inexistentes",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre_donante\": \"\",\n  \"cantidad_arboles\": 0,\n  \"pagado\": false,\n  \"usuario\": {\n    \"id\": 999999\n  },\n  \"especie\": {\n    \"id\": 999999\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/donaciones",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "donaciones"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "GET ALL OK - Listar donaciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta es un array de donaciones\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "\r",
+                  "    json.forEach(donacion => {\r",
+                  "        pm.expect(donacion).to.have.property(\"id\");\r",
+                  "        pm.expect(donacion).to.have.property(\"nombre_donante\");\r",
+                  "        pm.expect(donacion).to.have.property(\"cantidad_arboles\");\r",
+                  "        pm.expect(donacion).to.have.property(\"estado\");\r",
+                  "        pm.expect(donacion).to.have.property(\"pagado\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -926,6 +1137,33 @@
         },
         {
           "name": "GET ALL OK - Listar donaciones por estado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Todas las donaciones tienen el estado solicitado\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const estado = pm.request.url.query.get(\"estado\");\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "\r",
+                  "    json.forEach(donacion => {\r",
+                  "        pm.expect(donacion).to.have.property(\"estado\");\r",
+                  "        pm.expect(donacion.estado).to.eql(estado);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -961,6 +1199,35 @@
         },
         {
           "name": "GET ALL OK - Listar donaciones por usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta es un array de donaciones\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "\r",
+                  "    json.forEach(donacion => {\r",
+                  "        pm.expect(donacion).to.have.property(\"id\");\r",
+                  "        pm.expect(donacion).to.have.property(\"nombre_donante\");\r",
+                  "        pm.expect(donacion).to.have.property(\"cantidad_arboles\");\r",
+                  "        pm.expect(donacion).to.have.property(\"estado\");\r",
+                  "        pm.expect(donacion).to.have.property(\"pagado\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -996,6 +1263,31 @@
         },
         {
           "name": "GET/:ID OK - Obtener donación por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Estructura de donación correcta\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"nombre_donante\");\r",
+                  "    pm.expect(json).to.have.property(\"cantidad_arboles\");\r",
+                  "    pm.expect(json).to.have.property(\"estado\");\r",
+                  "    pm.expect(json).to.have.property(\"pagado\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -1026,6 +1318,26 @@
         },
         {
           "name": "GET/:ID 404 - Obtener donación inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -1056,6 +1368,34 @@
         },
         {
           "name": "PUT OK - Actualizar donación completa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Donación actualizada con estructura correcta\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"nombre_donante\");\r",
+                  "    pm.expect(json).to.have.property(\"cantidad_arboles\");\r",
+                  "    pm.expect(json).to.have.property(\"estado\");\r",
+                  "    pm.expect(json).to.have.property(\"pagado\");\r",
+                  "\r",
+                  "    pm.expect(json.cantidad_arboles).to.eql(8);\r",
+                  "    pm.expect(json.estado).to.eql(\"COMPLETADA\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -1072,7 +1412,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre_donante\": \"Lucía Martín Verde\",\n  \"cantidad_arboles\": 8,\n  \"estado\": \"COMPLETADA\",\n  \"pagado\": true,\n  \"usuario\": {\n    \"id\": \"{{usuario_id}}\"\n  },\n  \"especie\": {\n    \"id\": \"{{especie_id}}\"\n  }\n}",
+              "raw": "{\n  \"nombre_donante\": \"Lucía Martín Verde\",\n  \"cantidad_arboles\": 8,\n  \"estado\": \"COMPLETADA\",\n  \"pagado\": true,\n  \"usuario\": {\n    \"id\": {{usuario_id}}\n  },\n  \"especie\": {\n    \"id\": {{especie_id}}\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1094,12 +1434,32 @@
         },
         {
           "name": "PUT 400 - Actualizar donación inválida",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"nombre_donante\": \"\",\r\n  \"cantidad_arboles\": -3,\r\n  \"total_donado\": -50,\r\n  \"pagado\": true,\r\n  \"estado\": \"COMPLETADA\",\r\n  \"fecha\": \"2026-05-15\",\r\n  \"id_especie\": 999999,\r\n  \"id_usuario\": 999999\r\n}",
+              "raw": "{\r\n  \"nombre_donante\": \"\",\r\n  \"cantidad_arboles\": -3,\r\n  \"estado\": \"COMPLETADA\",\r\n  \"pagado\": true,\r\n  \"usuario\": {\r\n    \"id\": {{usuario_id}}\r\n  },\r\n  \"especie\": {\r\n    \"id\": {{especie_id}}\r\n  }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1121,6 +1481,26 @@
         },
         {
           "name": "PUT 404 - Actualizar donación inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -1159,6 +1539,25 @@
         },
         {
           "name": "DELETE OK - Cancelar donación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 204 No Content\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"El body está vacío\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [
@@ -1189,6 +1588,26 @@
         },
         {
           "name": "DELETE 404 - Cancelar donación inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [
@@ -1224,44 +1643,35 @@
       "name": "Usuarios",
       "item": [
         {
-          "name": "POST 400 - Crear usuario inválido",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"\",\n  \"email\": \"email-no-valido\",\n  \"contrasena\": \"123\",\n  \"rol\": \"CLIENTE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/usuarios",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "usuarios"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "GET ALL OK - Listar usuarios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta es un array de usuarios\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "\r",
+                  "    json.forEach(usuario => {\r",
+                  "        pm.expect(usuario).to.have.property(\"id\");\r",
+                  "        pm.expect(usuario).to.have.property(\"nombre\");\r",
+                  "        pm.expect(usuario).to.have.property(\"email\");\r",
+                  "        pm.expect(usuario).to.have.property(\"rol\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -1291,6 +1701,30 @@
         },
         {
           "name": "GET/:ID OK - Obtener usuario por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Estructura de usuario correcta\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"nombre\");\r",
+                  "    pm.expect(json).to.have.property(\"email\");\r",
+                  "    pm.expect(json).to.have.property(\"rol\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -1321,6 +1755,26 @@
         },
         {
           "name": "GET/:ID 404 - Obtener usuario inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -1351,6 +1805,47 @@
         },
         {
           "name": "PUT OK - Actualizar usuario completo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Usuario actualizado con estructura correcta\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"nombre\");\r",
+                  "    pm.expect(json).to.have.property(\"email\");\r",
+                  "    pm.expect(json).to.have.property(\"rol\");\r",
+                  "\r",
+                  "    pm.expect(json.nombre).to.eql(\"Lucía Martín Verde Actualizada\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const random = Math.floor(Math.random() * 100000);\r",
+                  "\r",
+                  "const updatedEmail = `usuario.actualizado${random}@example.com`;\r",
+                  "\r",
+                  "pm.environment.set(\"updated_user_email\", updatedEmail);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -1367,7 +1862,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Lucía Martín Verde Actualizada\",\n  \"email\": \"lucia.martin.actualizada@example.com\",\n  \"contrasena\": \"Bosque456\",\n  \"rol\": \"USER\"\n}",
+              "raw": "{\n  \"nombre\": \"Lucía Martín Verde Actualizada\",\n  \"email\": \"{{updated_user_email}}\",\n  \"contrasena\": \"Bosque456\",\n  \"rol\": \"USER\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1389,6 +1884,26 @@
         },
         {
           "name": "PUT 400 - Actualizar usuario inválido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400 Bad Request\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -1427,6 +1942,26 @@
         },
         {
           "name": "PUT 404 - Actualizar usuario inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -1465,6 +2000,25 @@
         },
         {
           "name": "DELETE OK - Eliminar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 204 No Content\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"El body está vacío\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [
@@ -1495,6 +2049,26 @@
         },
         {
           "name": "DELETE 404 - Eliminar usuario inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"La respuesta de error tiene estructura JSON\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [
@@ -1568,19 +2142,19 @@
     },
     {
       "key": "usuario_id",
-      "value": "1"
+      "value": ""
     },
     {
       "key": "especie_id",
-      "value": "1"
+      "value": ""
     },
     {
       "key": "donacion_id",
-      "value": "1"
+      "value": ""
     },
     {
       "key": "token",
-      "value": "token"
+      "value": ""
     }
   ]
 }
