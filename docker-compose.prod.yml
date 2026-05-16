@@ -1,0 +1,52 @@
+services:
+  reforest-db:
+    image: mariadb:11.3.2
+    container_name: reforest-db
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: reforest
+    ports:
+      - "3307:3306"
+    volumes:
+      - reforest-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  config-server:
+    build:
+      context: ./ReForestConfigServer
+    container_name: reforest-config-server
+    ports:
+      - "8888:8888"
+
+  reforest-api:
+    build:
+      context: ./backend
+    container_name: reforest-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    depends_on:
+      reforest-db:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+
+  reforest-frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://32.196.194.0:8080
+    container_name: reforest-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - reforest-api
+
+volumes:
+  reforest-db-data:
